@@ -7,7 +7,7 @@ export class ProviderSetup extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      section: '',
+      section: 'Login',
       socket: this.props.socket || null
     };
   }

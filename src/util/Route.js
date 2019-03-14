@@ -37,7 +37,9 @@ export default props => (
   <Consumer>
     {context => (
       <CSSTransition
-        in={props.for === context.state.section}
+        in={props.target != null
+          ? props.target.name === context.state.section
+          : props.for === context.state.section}
         timeout={400}
         classNames='section'
         unmountOnExit >

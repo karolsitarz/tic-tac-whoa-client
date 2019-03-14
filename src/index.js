@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import { ProviderSetup } from './util/Context';
 import GlobalStyles from './styles/global-styles';
-// import Route from './util/Route';
+import Route from './util/Route';
+import Login from './Login';
 
 const socket = new window.WebSocket(`ws://${window.location.hostname}:443`);
 
@@ -20,8 +21,7 @@ socket.onopen = () => {
     <ProviderSetup socket={socket}>
       <Container>
         <GlobalStyles />
-        siemanko
-        {/* <Route for='Login' target={Login} /> */}
+        <Route target={Login} />
       </Container>
     </ProviderSetup>
   );
