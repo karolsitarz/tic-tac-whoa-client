@@ -3,8 +3,6 @@ import React, { Component, createContext } from 'react';
 // Provider and Consumer are connected through their "parent" context
 const { Provider, Consumer } = createContext();
 
-const SECTIONS = ['Login', 'RoomJoin'];
-
 export class ProviderSetup extends Component {
   constructor (props) {
     super(props);
@@ -18,7 +16,7 @@ export class ProviderSetup extends Component {
       <Provider value={{
         state: this.state,
         changeSection: section => {
-          if (typeof section !== 'string' || !SECTIONS.includes(section)) return false;
+          if (typeof section !== 'string') return false;
           this.setState({ section });
         }
       }}>

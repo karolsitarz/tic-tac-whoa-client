@@ -45,8 +45,6 @@ const StyledTextInput = styled.input`
   width: 100%;
   max-width: 300px;
   margin: .5em 0;
-  color: inherit;
-  color: #666;
 
   &:focus + span,
   &:not(:placeholder-shown) + span {

@@ -12,7 +12,7 @@ export default class RoomJoin extends Component {
         <Button
           onClick={e => socket.comm('USER_CREATE_ROOM')}
           primary>
-          get a fresh room
+          start a new game
         </Button>
         <Or />
         <Input
@@ -21,7 +21,7 @@ export default class RoomJoin extends Component {
           placeholder='room ID' />
         <Button
           onClick={e => socket.comm('USER_JOIN_ROOM', { id: this.input })}>
-          join the room
+          join
         </Button>
 
         <Consumer>{context => <TransparentEvent context={context} />}</Consumer>
@@ -32,7 +32,7 @@ export default class RoomJoin extends Component {
 class TransparentEvent extends Component {
   constructor (props) {
     super(props);
-    socket.receive('USER_LOGIN_SUCCESS', e => this.props.context.changeSection('JoinRoom'));
+    socket.receive('ROOM_JOIN', e => this.props.context.changeSection('Room'));
   }
   render () {
     return <React.Fragment />;
