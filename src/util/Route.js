@@ -26,10 +26,12 @@ const StyledDiv = styled.section`
   }
   &.section-enter {
     opacity: 0;
+    transform: translate3d(0,-1em,0);
   }
   &.section-enter-active {
     pointer-events: none;
     opacity: 1;
+    transform: translate3d(0,0,0);
   }
 `;
 

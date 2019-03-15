@@ -7,6 +7,7 @@ import { ProviderSetup } from './util/Context';
 import GlobalStyles from './styles/global-styles';
 import Route from './util/Route';
 import Login from './sections/Login';
+import RoomJoin from './sections/RoomJoin';
 
 const Container = styled.div`
   height: 100%;
@@ -21,6 +22,7 @@ socket.onopen = () => {
       <Container>
         <GlobalStyles />
         <Route target={Login} />
+        <Route target={RoomJoin} />
       </Container>
     </ProviderSetup>
   );

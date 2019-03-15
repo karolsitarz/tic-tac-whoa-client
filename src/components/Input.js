@@ -47,7 +47,6 @@ const StyledTextInput = styled.input`
   margin: .5em 0;
   color: inherit;
   color: #666;
-  box-shadow: 0 0 0 1px #ebebeb;
 
   &:focus + span,
   &:not(:placeholder-shown) + span {
@@ -127,10 +126,11 @@ const StyledButton = styled.div`
 
   ${props => props.primary && css`
     background-image: linear-gradient(to right, #fc8ca1, #dc64b9, #8c5dc7, #5b80cc);
+    box-shadow: 0 0.5em 1em 0 #00000022;
   `}
 
-  color: ${props => props.primary ? '#fff' : '#666'};
-  fill: ${props => props.primary ? '#fff' : '#666'};
+  color: ${props => props.primary ? '#fff' : '#aaa'};
+  fill: ${props => props.primary ? '#fff' : '#aaa'};
 
   & svg {
     height: 1em;
@@ -144,4 +144,32 @@ export const Button = props => (
     primary={props.primary} >
     {props.children}
   </StyledButton>
+);
+
+//
+
+const StyledOr = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  padding: 2em 0;
+  width: 50%;
+
+  &::after, &::before {
+    content: "";
+    flex-grow: 1;
+    background: #eee;
+    height: 0.2em;
+  }
+  > span {
+    font-weight: bold;
+    color: #aaa;
+    margin: .5em;
+  }
+`;
+
+export const Or = props => (
+  <StyledOr><span>or</span></StyledOr>
 );
