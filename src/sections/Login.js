@@ -9,12 +9,16 @@ class Login extends Component {
   constructor (props) {
     super(props);
     const { dispatch } = this.props;
-    socket.receive('USER_LOGIN_SUCCESS', e => dispatch(changeSection('RoomJoin')));
+    socket.receive('USER_LOGIN_SUCCESS', nickname => {
+      dispatch(changeSection('RoomJoin'));
+      window.localStorage.nickname = nickname;
+    });
   }
   render () {
     return (
       <Section>
         <Input
+          initial={window.localStorage.nickname || ''}
           sendValue={v => (this.input = v)}
           maxLength={20}
           placeholder='nickname' />

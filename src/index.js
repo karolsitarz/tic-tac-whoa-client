@@ -8,7 +8,8 @@ import GlobalStyles from './styles/global-styles';
 import Route from './util/Route';
 import Login from './sections/Login';
 import RoomJoin from './sections/RoomJoin';
-import { RoomWait } from './sections/Room';
+import RoomWait from './sections/Room';
+import Game from './sections/Game';
 
 const Container = styled.div`
   height: 100%;
@@ -25,12 +26,15 @@ socket.onopen = () => {
         <Route target={Login} />
         <Route target={RoomJoin} />
         <Route target={RoomWait} />
+        <Route target={Game} />
       </Container>
     </Provider>
   );
 
   // on close event
-  socket.onclose = () => {};
+  socket.onclose = () => {
+    console.error('CONNECTION_CLOSED');
+  };
 
   ReactDOM.render(<App />, document.getElementById('container'));
 };

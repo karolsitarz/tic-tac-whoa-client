@@ -1,7 +1,8 @@
 import { createStore } from 'react-context-redux';
 
 const store = createStore({
-  section: 'Login'
+  section: 'Login',
+  currentRoom: ''
 });
 export const { Provider } = store;
 
@@ -12,7 +13,6 @@ export const connect = state => component => {
   return connect;
 };
 
-// export default Consumer;
 export const changeSection = section => dispatch => {
   dispatch({
     key: 'section',
