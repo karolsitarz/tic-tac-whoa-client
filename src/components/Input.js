@@ -45,6 +45,7 @@ const StyledTextInput = styled.input`
   width: 100%;
   max-width: 300px;
   margin: .5em 0;
+  pointer-events: auto;
 
   &:focus + span,
   &:not(:placeholder-shown) + span {
@@ -121,6 +122,7 @@ const StyledButton = styled.div`
   background-size: cover;
   background-position: center;
   background-color: #f7f7f7;
+  pointer-events: auto;
 
   ${props => props.primary && css`
     background-image: linear-gradient(to right, #fc8ca1, #dc64b9, #8c5dc7, #5b80cc);

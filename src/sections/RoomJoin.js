@@ -17,7 +17,7 @@ export default class RoomJoin extends Component {
         <Or />
         <Input
           sendValue={v => (this.input = v)}
-          maxLength={32}
+          maxLength={16}
           placeholder='room ID' />
         <Button
           onClick={e => socket.comm('USER_JOIN_ROOM', { id: this.input })}>
@@ -32,7 +32,9 @@ export default class RoomJoin extends Component {
 class TransparentEvent extends Component {
   constructor (props) {
     super(props);
-    socket.receive('ROOM_JOIN', e => this.props.context.changeSection('Room'));
+    socket.receive('ROOM_WAIT', e => this.props.context.changeSection('RoomWait'));
+    socket.receive('ROOM_ACCEPT', e => this.props.context.changeSection('RoomAccept'));
+    socket.receive('LEAVE_ROOM', e => this.props.context.changeSection('RoomJoin'));
   }
   render () {
     return <React.Fragment />;

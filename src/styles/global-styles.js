@@ -41,6 +41,7 @@ export default createGlobalStyle`
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-tap-highlight-color: transparent;
     color: #666;
+    pointer-events: none;
   }
   *:not(input) {
     -webkit-touch-callout: none;
