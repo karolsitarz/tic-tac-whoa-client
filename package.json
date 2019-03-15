@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "react": "^16.8.4",
+    "react-context-redux": "^0.3.0",
     "react-dom": "^16.8.4",
     "react-transition-group": "^2.6.1",
     "styled-components": "^4.1.3"

@@ -40,7 +40,7 @@ export default createGlobalStyle`
     font-family: 'Work Sans', Helvetica, sans-serif;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-tap-highlight-color: transparent;
-    color: #666;
+    color: #777;
     pointer-events: none;
   }
   *:not(input) {

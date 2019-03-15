@@ -3,10 +3,8 @@ import styled, { css } from 'styled-components';
 
 const TextInputSpan = styled.span`
   text-transform: uppercase;
-  font-size: .8em;
-  letter-spacing: .1em;
+  font-size: .75em;
   font-weight: 700;
-  padding-left: .1em;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -34,13 +32,12 @@ const TextInputSpan = styled.span`
 const StyledTextInput = styled.input`
   border-radius: 3em;
   overflow: hidden;
-  padding: .75em 1.95em .75em 2em;
+  padding: .75em 2em;
   display: inline-block;
   background-color: #f7f7f7;
   border: 0;
   text-align: center;
   font-weight: 700;
-  letter-spacing: .05em;
   font-size: .8em;
   width: 100%;
   max-width: 300px;
@@ -103,11 +100,11 @@ export default class TextInput extends Component {
 const StyledButton = styled.div`
   border-radius: 100vmax;
   overflow: hidden;
-  padding: ${props => typeof (props.children) === 'object' ? '.7em 1.5em' : '.7em 3.7em .7em 4em'};
+  padding: ${props => typeof (props.children) === 'object' ? '.7em 1.5em' : '.7em 3.85em .7em 4em'};
   text-transform: uppercase;
   font-weight: 700;
   font-size: .75em;
-  letter-spacing: .3em;
+  letter-spacing: .15em;
   cursor: pointer;
   border: 0;
   display: inline-flex;

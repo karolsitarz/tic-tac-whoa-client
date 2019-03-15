@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
+import { Provider } from './util/store';
 import socket from './util/socketSetup';
-import { ProviderSetup } from './util/Context';
 import GlobalStyles from './styles/global-styles';
 import Route from './util/Route';
 import Login from './sections/Login';
@@ -19,14 +19,14 @@ const Container = styled.div`
 socket.onopen = () => {
   // main App
   const App = props => (
-    <ProviderSetup socket={socket}>
+    <Provider>
       <Container>
         <GlobalStyles />
         <Route target={Login} />
         <Route target={RoomJoin} />
         <Route target={RoomWait} />
       </Container>
-    </ProviderSetup>
+    </Provider>
   );
 
   // on close event

@@ -3,9 +3,14 @@ import React, { Component } from 'react';
 import Section from '../components/Section';
 import Input, { Button } from '../components/Input';
 import socket from '../util/socketSetup';
-import Consumer from '../util/Context';
+import { connect, changeSection } from '../util/store';
 
-export default class Login extends Component {
+class Login extends Component {
+  constructor (props) {
+    super(props);
+    const { dispatch } = this.props;
+    socket.receive('USER_LOGIN_SUCCESS', e => dispatch(changeSection('RoomJoin')));
+  }
   render () {
     return (
       <Section>
@@ -18,17 +23,9 @@ export default class Login extends Component {
           primary>
           jump in!
         </Button>
-        <Consumer>{context => <TransparentEvent context={context} />}</Consumer>
       </Section>
     );
   }
 }
-class TransparentEvent extends Component {
-  constructor (props) {
-    super(props);
-    socket.receive('USER_LOGIN_SUCCESS', e => this.props.context.changeSection('RoomJoin'));
-  }
-  render () {
-    return <React.Fragment />;
-  }
-}
+
+export default connect(null)(Login);

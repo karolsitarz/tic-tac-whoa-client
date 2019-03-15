@@ -2,7 +2,7 @@ import React from 'react';
 import { CSSTransition } from 'react-transition-group';
 import styled from 'styled-components';
 
-import Consumer from '../util/Context';
+import { connect } from '../util/store';
 
 const StyledDiv = styled.section`
   width: 100%;
@@ -35,20 +35,22 @@ const StyledDiv = styled.section`
   }
 `;
 
-export default props => (
-  <Consumer>
-    {context => (
-      <CSSTransition
-        in={props.target != null
-          ? props.target.name === context.state.section
-          : props.for === context.state.section}
-        timeout={400}
-        classNames='section'
-        unmountOnExit >
-        <StyledDiv key={props.for}>
-          {props.target ? <props.target /> : props.children}
-        </StyledDiv>
-      </CSSTransition>
-    )}
-  </Consumer>
+const Route = props => (
+  <CSSTransition
+    in={props.target != null
+      ? (props.target.name === props.section || props.target.route === props.section)
+      : props.for === props.section}
+    timeout={400}
+    classNames='section'
+    unmountOnExit >
+    <StyledDiv key={props.for}>
+      {props.target ? <props.target /> : props.children}
+    </StyledDiv>
+  </CSSTransition>
 );
+
+const mapStateToProps = state => ({
+  section: state.section
+});
+
+export default connect(mapStateToProps)(Route);
