@@ -56,9 +56,11 @@ const StyledTic = styled.div`
 const Grid = styled.div`
   display: grid;
   place-items: center;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template: repeat(4, 1fr) / repeat(4, 1fr);
   grid-gap: 1em;
   pointer-events: ${props => props.state === props.wantedState ? 'auto' : ''};
+  opacity: ${props => props.state === props.wantedState ? '1' : '0.5'};
+  transition: opacity .3s ease;
 `;
 
 const StyledGridSpot = styled.div`
@@ -67,6 +69,8 @@ const StyledGridSpot = styled.div`
   max-width: 3em;
   max-height: 3em;
   flex-shrink: 0;
+  grid-area: ${props => props.col} / ${props => props.row} / span 1 / span 1;
+
   &::before {
     content: "";
     position: absolute;
@@ -82,7 +86,7 @@ const StyledGridSpot = styled.div`
   }
 `;
 
-const GridSpot = ({ pos }) => <StyledGridSpot onClick={e => socket.comm('GAME_PLACED', pos)} />;
+const GridSpot = ({ pos }) => <StyledGridSpot col={pos % 4 + 1} row={Math.floor(pos / 4 + 1)} onClick={e => socket.comm('GAME_PLACED', pos)} />;
 const Tic = props =>
   <StyledTic {...props}
     onClick={e =>
@@ -98,11 +102,31 @@ export default class Game extends Component {
     super(props);
     this.state = {
       // WAIT - PLACE - PICK
-      state: 'WAIT'
+      state: 'WAIT',
+      placed: []
     };
     socket.receive('GAME_PLACE', e => this.setState({ state: 'PLACE' }));
     socket.receive('GAME_PICK', e => this.setState({ state: 'PICK' }));
     socket.receive('GAME_WAIT', e => this.setState({ state: 'WAIT' }));
+
+    socket.receive('GAME_PLACED', ({ pos, tic }) => {
+      this.setState({ placed: [
+        ...this.state.placed,
+        <Tic
+          style={{
+            gridArea: `${pos % 4 + 1} / ${Math.floor(pos / 4 + 1)} / span 1 / span 1`
+          }}
+          key={pos}
+          big={tic.size === 'big'}
+          small={tic.size === 'small'}
+          circle={tic.shape === 'circle'}
+          square={tic.shape === 'square'}
+          hole={tic.hole === 'hole'}
+          flat={tic.hole === 'flat'}
+          red={tic.color === 'red'}
+          blue={tic.color === 'blue'} />
+      ] });
+    });
   }
   render () {
     return (
@@ -124,6 +148,7 @@ export default class Game extends Component {
           <GridSpot pos={13} />
           <GridSpot pos={14} />
           <GridSpot pos={15} />
+          {this.state.placed}
         </Grid>
         <Space size={2} />
         <Grid state={this.state.state} wantedState='PICK'>
