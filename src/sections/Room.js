@@ -13,6 +13,7 @@ const StyledSpan = styled.span`
   text-transform: uppercase;
   font-size: 0.8em;
   font-weight: bold;
+  text-align: center;
 `;
 
 class RoomWait extends Component {
