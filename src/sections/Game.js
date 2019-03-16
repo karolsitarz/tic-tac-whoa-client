@@ -12,6 +12,9 @@ const StyledTic = styled.div`
   max-width: 3em;
   max-height: 3em;
   flex-shrink: 0;
+  opacity: ${props => props.disabled ? '0.25' : '1'};
+  pointer-events: ${props => props.disabled ? 'none' : 'auto'};
+  transition: opacity .3s ease;
 
   &::before {
     content: "";
@@ -58,8 +61,8 @@ const Grid = styled.div`
   place-items: center;
   grid-template: repeat(4, 1fr) / repeat(4, 1fr);
   grid-gap: 1em;
-  pointer-events: ${props => props.state === props.wantedState ? 'auto' : ''};
-  opacity: ${props => props.state === props.wantedState ? '1' : '0.5'};
+  pointer-events: ${props => props.currentState === props.wantedState ? 'auto' : ''};
+  opacity: ${props => props.currentState === props.wantedState ? '1' : '0.5'};
   transition: opacity .3s ease;
 `;
 
@@ -103,7 +106,25 @@ export default class Game extends Component {
     this.state = {
       // WAIT - PLACE - PICK
       state: 'WAIT',
-      placed: []
+      placed: [],
+      tics: [
+        <Tic key={'ssrf'} small square red flat />,
+        <Tic key={'bsrh'} big square red hole />,
+        <Tic key={'bcrh'} big circle red hole />,
+        <Tic key={'scrf'} small circle red flat />,
+        <Tic key={'ssrh'} small square red hole />,
+        <Tic key={'bsrf'} big square red flat />,
+        <Tic key={'bcrf'} big circle red flat />,
+        <Tic key={'scrh'} small circle red hole />,
+        <Tic key={'ssbh'} small square blue hole />,
+        <Tic key={'bsbf'} big square blue flat />,
+        <Tic key={'bcbf'} big circle blue flat />,
+        <Tic key={'scbh'} small circle blue hole />,
+        <Tic key={'ssbf'} small square blue flat />,
+        <Tic key={'bsbh'} big square blue hole />,
+        <Tic key={'bcbh'} big circle blue hole />,
+        <Tic key={'scbf'} small circle blue flat />
+      ]
     };
     socket.receive('GAME_PLACE', e => this.setState({ state: 'PLACE' }));
     socket.receive('GAME_PICK', e => this.setState({ state: 'PICK' }));
@@ -127,11 +148,25 @@ export default class Game extends Component {
           blue={tic.color === 'blue'} />
       ] });
     });
+    socket.receive('GAME_PICKED', data => {
+      const placedTic = data.tic;
+      const newTics = [...this.state.tics];
+      const i = newTics.findIndex(tic => {
+        if (tic.props.disabled) return false;
+        if (!(placedTic.size in tic.props)) return false;
+        if (!(placedTic.shape in tic.props)) return false;
+        if (!(placedTic.hole in tic.props)) return false;
+        if (!(placedTic.color in tic.props)) return false;
+        return true;
+      });
+      newTics[i] = React.cloneElement(newTics[i], { ...newTics[i].props, disabled: true });
+      this.setState({ tics: newTics });
+    });
   }
   render () {
     return (
       <Section>
-        <Grid state={this.state.state} wantedState='PLACE'>
+        <Grid currentState={this.state.state} wantedState='PLACE'>
           <GridSpot pos={0} />
           <GridSpot pos={1} />
           <GridSpot pos={2} />
@@ -151,23 +186,10 @@ export default class Game extends Component {
           {this.state.placed}
         </Grid>
         <Space size={2} />
-        <Grid state={this.state.state} wantedState='PICK'>
-          <Tic small square red flat />
-          <Tic big square red hole />
-          <Tic big circle red hole />
-          <Tic small circle red flat />
-          <Tic small square red hole />
-          <Tic big square red flat />
-          <Tic big circle red flat />
-          <Tic small circle red hole />
-          <Tic small square blue hole />
-          <Tic big square blue flat />
-          <Tic big circle blue flat />
-          <Tic small circle blue hole />
-          <Tic small square blue flat />
-          <Tic big square blue hole />
-          <Tic big circle blue hole />
-          <Tic small circle blue flat />
+        <Grid
+          currentState={this.state.state}
+          wantedState='PICK'>
+          {this.state.tics}
         </Grid>
       </Section>
     );
