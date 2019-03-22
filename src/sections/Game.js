@@ -68,7 +68,13 @@ const StyledTic = styled.div`
     transform: ${props => props.flat
     ? 'translate(-50%,-50%) scale(0)'
     : (props.big
-      ? 'translate(-50%,-50%) scale(1)' : 'translate(-50%,-50%) scale(calc(1 / 3 * 2))')}
+      ? 'translate(-50%,-50%) scale(1)' : 'translate(-50%,-50%) scale(calc(1 / 3 * 2))')};
+    box-shadow: ${props => props.current === true
+    ? props => props.red
+      ? '0 0 0 0.35em #ff969c88 inset'
+      : '0 0 0 0.35em #5988cc88 inset'
+    : '0 0 0 0 #fff8 inset'};
+    transition: box-shadow .3s ease;
   }
 `;
 
@@ -105,7 +111,7 @@ const StyledGridSpot = styled.div`
   }
 `;
 
-const GridSpot = ({ pos, setPickedPos }) => <StyledGridSpot col={pos % 4 + 1} row={Math.floor(pos / 4 + 1)} onClick={e => setPickedPos(pos)} />;
+const GridSpot = ({ pos, setPickedPos }) => <StyledGridSpot col={Math.floor(pos / 4 + 1)} row={pos % 4 + 1} onClick={e => setPickedPos(pos)} />;
 
 const Tic = props =>
   <StyledTic {...props}
@@ -160,13 +166,14 @@ export default class Game extends Component {
     socket.receive('GAME_WAIT', e => this.setState({ state: 'WAIT', textNo: 3 }));
 
     socket.receive('GAME_PLACED', ({ pos, tic }) => {
+      this.setState({ pickedTic: null });
       if (this.state.textNo === 3) this.setState({ textNo: 0 });
-      this.setState({
-        placed: [
-          ...this.state.placed,
+      const placed = [...this.state.placed];
+      placed[placed.length - 1] =
+        (
           <Tic
             style={{
-              gridArea: `${pos % 4 + 1} / ${Math.floor(pos / 4 + 1)} / span 1 / span 1`
+              gridArea: `${Math.floor(pos / 4 + 1)} / ${pos % 4 + 1} / span 1 / span 1`
             }}
             key={pos}
             big={tic.size === 'big'}
@@ -177,8 +184,8 @@ export default class Game extends Component {
             flat={tic.hole === 'flat'}
             red={tic.color === 'red'}
             blue={tic.color === 'blue'} />
-        ]
-      });
+        );
+      this.setState({ placed });
 
       const newTics = [...this.state.tics];
       const i = newTics.findIndex(tic => {
@@ -190,8 +197,13 @@ export default class Game extends Component {
       newTics[i] = React.cloneElement(newTics[i], { ...newTics[i].props, current: undefined });
       this.setState({ tics: newTics });
     });
+
     socket.receive('GAME_PICKED', data => {
-      this.setState({ pickedTic: null });
+      this.setState({
+        pickedTic: data.tic,
+        pickedPos: null,
+        placed: [...this.state.placed, null]
+      });
       const placedTic = data.tic;
       const newTics = [...this.state.tics];
       const i = newTics.findIndex(tic => {
@@ -280,6 +292,27 @@ export default class Game extends Component {
   }
 
   setPickedPos (pos) {
+    if (this.state.state !== 'PLACE') return;
     this.setState({ pickedPos: pos });
+
+    const tic = this.state.pickedTic;
+    const placed = [...this.state.placed];
+    placed[placed.length - 1] =
+      (
+        <Tic
+          style={{
+            gridArea: `${Math.floor(pos / 4 + 1)} / ${pos % 4 + 1} / span 1 / span 1`
+          }}
+          key={pos}
+          big={tic.size === 'big'}
+          small={tic.size === 'small'}
+          circle={tic.shape === 'circle'}
+          square={tic.shape === 'square'}
+          hole={tic.hole === 'hole'}
+          flat={tic.hole === 'flat'}
+          red={tic.color === 'red'}
+          blue={tic.color === 'blue'} />
+      );
+    this.setState({ placed: placed });
   }
 }
