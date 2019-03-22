@@ -6,7 +6,7 @@ export default styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   max-width: 50em;
   margin: auto;
   padding: 1em;

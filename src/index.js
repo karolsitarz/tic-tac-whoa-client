@@ -14,7 +14,9 @@ import Game from './sections/Game';
 const Container = styled.div`
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  pointer-events: auto;
 `;
 
 socket.onopen = () => {

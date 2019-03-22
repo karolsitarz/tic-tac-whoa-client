@@ -4,6 +4,7 @@ import styled, { keyframes } from 'styled-components';
 import socket from '../util/socketSetup';
 
 import Section from '../components/Section';
+import { Button } from '../components/Input';
 import Space from '../components/Space';
 
 const ticFadeIn = keyframes`
@@ -19,7 +20,7 @@ const StyledTic = styled.div`
   max-width: 3em;
   max-height: 3em;
   flex-shrink: 0;
-  opacity: ${props => props.disabled ? '0.25' : '1'};
+  opacity: ${props => props.disabled ? '0.1' : '1'};
   pointer-events: ${props => props.disabled ? 'none' : ''};
   transition: opacity .3s ease;
   opacity: ${props => props.current === true ? '1' : ''};
@@ -39,8 +40,8 @@ const StyledTic = styled.div`
     : 'linear-gradient(to right bottom, #ff76ad, #ffb58c)'};
     box-shadow: ${props => props.current === true
     ? props => props.red
-      ? '0 0 0 0.35em #5988cc88'
-      : '0 0 0 0.35em #ff969c88'
+      ? '0 0 0 0.35em #ff969c88'
+      : '0 0 0 0.35em #5988cc88'
     : '0 0 0 0 #fff8'};
     transition: box-shadow .3s ease;
 
@@ -104,16 +105,19 @@ const StyledGridSpot = styled.div`
   }
 `;
 
-const GridSpot = ({ pos }) => <StyledGridSpot col={pos % 4 + 1} row={Math.floor(pos / 4 + 1)} onClick={e => socket.comm('GAME_PLACED', pos)} />;
+const GridSpot = ({ pos, setPickedPos }) => <StyledGridSpot col={pos % 4 + 1} row={Math.floor(pos / 4 + 1)} onClick={e => setPickedPos(pos)} />;
+
 const Tic = props =>
   <StyledTic {...props}
-    onClick={e =>
-      socket.comm('GAME_PICKED', {
+    onClick={e => {
+      if (!props.setPickedTic) return;
+      props.setPickedTic({
         size: props.big ? 'big' : 'small',
         shape: props.circle ? 'circle' : 'square',
         hole: props.hole ? 'hole' : 'flat',
         color: props.red ? 'red' : 'blue'
-      })} />;
+      });
+    }} />;
 
 const StyledSpan = styled.span`
   text-transform: uppercase;
@@ -128,25 +132,27 @@ export default class Game extends Component {
     this.state = {
       // WAIT - PLACE - PICK
       state: 'WAIT',
+      pickedTic: null,
+      pickedPos: null,
       placed: [],
       textNo: 0,
       tics: [
-        <Tic key={'ssrf'} small square red flat />,
-        <Tic key={'bsrh'} big square red hole />,
-        <Tic key={'bcrh'} big circle red hole />,
-        <Tic key={'scrf'} small circle red flat />,
-        <Tic key={'ssrh'} small square red hole />,
-        <Tic key={'bsrf'} big square red flat />,
-        <Tic key={'bcrf'} big circle red flat />,
-        <Tic key={'scrh'} small circle red hole />,
-        <Tic key={'ssbh'} small square blue hole />,
-        <Tic key={'bsbf'} big square blue flat />,
-        <Tic key={'bcbf'} big circle blue flat />,
-        <Tic key={'scbh'} small circle blue hole />,
-        <Tic key={'ssbf'} small square blue flat />,
-        <Tic key={'bsbh'} big square blue hole />,
-        <Tic key={'bcbh'} big circle blue hole />,
-        <Tic key={'scbf'} small circle blue flat />
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssrf'} small square red flat />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsrh'} big square red hole />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bcrh'} big circle red hole />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'scrf'} small circle red flat />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssrh'} small square red hole />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsrf'} big square red flat />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bcrf'} big circle red flat />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'scrh'} small circle red hole />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssbh'} small square blue hole />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsbf'} big square blue flat />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bcbf'} big circle blue flat />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'scbh'} small circle blue hole />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssbf'} small square blue flat />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsbh'} big square blue hole />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bcbh'} big circle blue hole />,
+        <Tic setPickedTic={v => this.setPickedTic(v)} key={'scbf'} small circle blue flat />
       ]
     };
     socket.receive('GAME_PLACE', e => this.setState({ state: 'PLACE', textNo: 1 }));
@@ -185,6 +191,7 @@ export default class Game extends Component {
       this.setState({ tics: newTics });
     });
     socket.receive('GAME_PICKED', data => {
+      this.setState({ pickedTic: null });
       const placedTic = data.tic;
       const newTics = [...this.state.tics];
       const i = newTics.findIndex(tic => {
@@ -205,28 +212,31 @@ export default class Game extends Component {
     return (
       <Section>
         <Grid currentState={this.state.state} wantedState='PLACE'>
-          <GridSpot pos={0} />
-          <GridSpot pos={1} />
-          <GridSpot pos={2} />
-          <GridSpot pos={3} />
-          <GridSpot pos={4} />
-          <GridSpot pos={5} />
-          <GridSpot pos={6} />
-          <GridSpot pos={7} />
-          <GridSpot pos={8} />
-          <GridSpot pos={9} />
-          <GridSpot pos={10} />
-          <GridSpot pos={11} />
-          <GridSpot pos={12} />
-          <GridSpot pos={13} />
-          <GridSpot pos={14} />
-          <GridSpot pos={15} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={0} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={1} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={2} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={3} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={4} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={5} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={6} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={7} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={8} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={9} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={10} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={11} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={12} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={13} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={14} />
+          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={15} />
           {this.state.placed}
         </Grid>
         <Space size={2} />
         <StyledSpan>
           {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic'][this.state.textNo]}
         </StyledSpan>
+        <Space size={1} />
+        <Button>lol i won</Button>
+        <Button primary onClick={e => this.endRound()}>ok</Button>
         <Space size={2} />
         <Grid
           currentState={this.state.state}
@@ -235,5 +245,41 @@ export default class Game extends Component {
         </Grid>
       </Section>
     );
+  }
+  endRound () {
+    if (this.state.state === 'PICK' && this.state.pickedTic != null) {
+      socket.comm('GAME_PICKED', this.state.pickedTic);
+    } else if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
+      socket.comm('GAME_PLACED', this.state.pickedPos);
+    }
+  }
+  setPickedTic (data) {
+    if (this.state.state !== 'PICK') return;
+    this.setState({ pickedTic: data });
+
+    const placedTic = data;
+    const newTics = [...this.state.tics];
+    const current = newTics.findIndex(tic => {
+      if (tic.props.current) return true;
+      return false;
+    });
+
+    const i = newTics.findIndex(tic => {
+      if (tic.props.disabled) return false;
+      if (!(placedTic.size in tic.props)) return false;
+      if (!(placedTic.shape in tic.props)) return false;
+      if (!(placedTic.hole in tic.props)) return false;
+      if (!(placedTic.color in tic.props)) return false;
+      return true;
+    });
+    if (i === -1) return;
+
+    if (current !== -1) newTics[current] = React.cloneElement(newTics[current], { ...newTics[current].props, disabled: false, current: false });
+    newTics[i] = React.cloneElement(newTics[i], { ...newTics[i].props, disabled: true, current: true });
+    this.setState({ tics: newTics });
+  }
+
+  setPickedPos (pos) {
+    this.setState({ pickedPos: pos });
   }
 }
