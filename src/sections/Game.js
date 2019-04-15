@@ -208,6 +208,54 @@ const WinningModal = styled.section`
     : 'translate3d(0,calc(100% + 1em),0)'};
 `;
 
+//
+
+const IconButton = styled.div`
+  &::after {
+    content: "";
+    display: block;
+    padding-bottom: calc(8000% / 88);
+    pointer-events: none;
+  }
+  &::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: calc(880% / 8);
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    background-color: #00000008;
+    transition: transform .3s ease, opacity .3s ease;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: ${props => props.type === props.stateType
+    ? 'translate(-50%, -50%) scale(1.1)'
+    : 'translate(-50%, -50%) scale(0)'};
+    opacity: ${props => props.type === props.stateType ? '1' : '0'};
+  }
+  > svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    width: 65%;
+    height: 65%;
+    pointer-events: none;
+    fill: #e4e4e4;
+  }
+  width: 20%;
+  max-height: 100px;  
+`;
+
+const IconButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  padding: 1em;
+`;
+
 export default class Game extends Component {
   constructor (props) {
     super(props);
@@ -218,6 +266,7 @@ export default class Game extends Component {
       pickedTic: null,
       pickedPos: null,
       winning: false,
+      pickedType: null,
       placed: [],
       textNo: 0,
       tics: [
@@ -334,7 +383,7 @@ export default class Game extends Component {
           </StyledSpan>
           <Space size={1} />
           <Button primary onClick={e => this.endRound()}>ok</Button>
-          <Button onClick={e => this.setState({ winning: true })}>I won</Button>
+          <Button onClick={e => this.setState({ winning: true, pickedType: null })}>I won</Button>
         </FixedSection>
         <BottomCard ref={ref => (this.BottomCard = ref)}>
           <Grid
@@ -345,29 +394,60 @@ export default class Game extends Component {
         </BottomCard>
         <ModalContainer winning={this.state.winning}>
           <WinningModal winning={this.state.winning}>
-            <Button primary onClick={e => {}}>ok</Button>
-            <Button onClick={e => this.setState({ winning: false })}>cancel</Button>
+            <StyledSpan>pick the type of winning tics</StyledSpan>
+            <IconButtonContainer>
+              <IconButton
+                onClick={e => this.setState({ pickedType: 'color' })}
+                type='color'
+                stateType={this.state.pickedType}>
+                <svg viewBox='0 0 880 800'>
+                  <path d='M160,800A160,160,0,0,1,0,640V160A160,160,0,0,1,160,0H400V800H160Z' />
+                  <path style={{ fill: '#bbb' }} d='M879,142.119V657.881A160.015,160.015,0,0,1,720,800H480V0H720A160.016,160.016,0,0,1,879,142.119Z' />
+                </svg>
+              </IconButton>
+              <IconButton
+                onClick={e => this.setState({ pickedType: 'hole' })}
+                type='hole'
+                stateType={this.state.pickedType}>
+                <svg viewBox='0 0 880 800'>
+                  <path d='M160,800A160,160,0,0,1,0,640V160A160,160,0,0,1,160,0H400V800H160Z' />
+                  <path d='M720, 800H480V600c110.457,0,200-89.543,200-200S590.457,200,480,200V0H720A160.016,160.016,0,0,1,879,142.119V657.881A160.015,160.015,0,0,1,720,800Z' />
+                </svg>
+              </IconButton>
+              <IconButton
+                onClick={e => this.setState({ pickedType: 'shape' })}
+                type='shape'
+                stateType={this.state.pickedType}>
+                <svg viewBox='0 0 880 800'>
+                  <path d='M160,800A160,160,0,0,1,0,640V160A160,160,0,0,1,160,0H400V800H160Z' />
+                  <path d='M480,800V0C700.914,0,880,179.086,880,400S700.914,800,480,800Z' />
+                </svg>
+              </IconButton>
+              <IconButton
+                onClick={e => this.setState({ pickedType: 'size' })}
+                type='size'
+                stateType={this.state.pickedType}>
+                <svg viewBox='0 0 880 800'>
+                  <path d='M160,800A160,160,0,0,1,0,640V160A160,160,0,0,1,160,0H400V800H160Z' />
+                  <path d='M745.973,228.1V571.9A106.667,106.667,0,0,1,639.984,666.64H480V133.36H639.984A106.667,106.667,0,0,1,745.973,228.1Z' />
+                </svg>
+              </IconButton>
+            </IconButtonContainer>
+            <Space size={1} />
+            <Button primary onClick={e => this.winning(this.state.pickedType)}>ok</Button>
+            <Button onClick={e => this.setState({ winning: false, pickedType: null })}>cancel</Button>
           </WinningModal>
         </ModalContainer>
       </Section>
     );
   }
   endRound () {
-    // if the player thinks he won
-    if (this.state.winning === true) {
-      // jesli ma jakas postawiona
-      if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
+    if (this.state.winning) return;
 
-      } else {
-
-      }
-      // else
-    } else {
-      if (this.state.state === 'PICK' && this.state.pickedTic != null) {
-        socket.comm('GAME_PICKED', this.state.pickedTic);
-      } else if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
-        socket.comm('GAME_PLACED', this.state.pickedPos);
-      }
+    if (this.state.state === 'PICK' && this.state.pickedTic != null) {
+      socket.comm('GAME_PICKED', this.state.pickedTic);
+    } else if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
+      socket.comm('GAME_PLACED', this.state.pickedPos);
     }
   }
   setPickedTic (data) {
@@ -421,5 +501,17 @@ export default class Game extends Component {
           blue={tic.color === 'blue'} />
       );
     this.setState({ placed: placed });
+  }
+
+  winning (type) {
+    if (!this.state.winning) return;
+    if (this.state.pickedType !== 'shape' && this.state.pickedType !== 'size' && this.state.pickedType !== 'hole' && this.state.pickedType !== 'color') return;
+
+    // jesli ma jakas postawiona
+    if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
+      socket.comm('GAME_WIN_PLACED', this.state.pickedTic, this.state.pickedPos);
+    } else {
+      socket.comm('GAME_WIN');
+    }
   }
 }
