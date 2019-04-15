@@ -163,6 +163,51 @@ const BlankFixedSection = styled.section`
   width: 100%;
 `;
 
+//
+
+const ModalContainer = styled.div`
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: ${props => props.winning ? 'all' : 'none'};
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0003;
+    opacity: ${props => props.winning ? '1' : '0'};
+    transition: opacity .3s ease;
+  }
+`;
+
+const WinningModal = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  margin: 1em;
+  padding: 2em 0;
+  border-radius: 2em;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition:
+    opacity .3s ease,
+    transform .3s ease;
+  opacity: ${props => props.winning ? '1' : '0'};
+  transform: ${props => props.winning
+    ? 'translate3d(0,0,0)'
+    : 'translate3d(0,calc(100% + 1em),0)'};
+`;
+
 export default class Game extends Component {
   constructor (props) {
     super(props);
@@ -172,7 +217,7 @@ export default class Game extends Component {
       state: 'WAIT',
       pickedTic: null,
       pickedPos: null,
-      iWon: false,
+      winning: false,
       placed: [],
       textNo: 0,
       tics: [
@@ -288,8 +333,8 @@ export default class Game extends Component {
             {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic'][this.state.textNo]}
           </StyledSpan>
           <Space size={1} />
-          <Button>lol i won</Button>
           <Button primary onClick={e => this.endRound()}>ok</Button>
+          <Button onClick={e => this.setState({ winning: true })}>I won</Button>
         </FixedSection>
         <BottomCard ref={ref => (this.BottomCard = ref)}>
           <Grid
@@ -298,13 +343,24 @@ export default class Game extends Component {
             {this.state.tics}
           </Grid>
         </BottomCard>
+        <ModalContainer winning={this.state.winning}>
+          <WinningModal winning={this.state.winning}>
+            <Button primary onClick={e => {}}>ok</Button>
+            <Button onClick={e => this.setState({ winning: false })}>cancel</Button>
+          </WinningModal>
+        </ModalContainer>
       </Section>
     );
   }
   endRound () {
     // if the player thinks he won
-    if (this.state.iWon === true) {
+    if (this.state.winning === true) {
+      // jesli ma jakas postawiona
+      if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
 
+      } else {
+
+      }
       // else
     } else {
       if (this.state.state === 'PICK' && this.state.pickedTic != null) {
@@ -316,7 +372,7 @@ export default class Game extends Component {
   }
   setPickedTic (data) {
     if (this.state.state !== 'PICK') return;
-    if (this.state.iWon !== false) return;
+    if (this.state.winning !== false) return;
     this.setState({ pickedTic: data });
 
     const placedTic = data;
@@ -343,7 +399,7 @@ export default class Game extends Component {
 
   setPickedPos (pos) {
     if (this.state.state !== 'PLACE') return;
-    if (this.state.iWon !== false) return;
+    if (this.state.winning !== false) return;
     this.setState({ pickedPos: pos });
 
     const tic = this.state.pickedTic;
@@ -365,9 +421,5 @@ export default class Game extends Component {
           blue={tic.color === 'blue'} />
       );
     this.setState({ placed: placed });
-  }
-
-  toggleIWon () {
-    this.setState({ iWon: !this.state.iWon });
   }
 }

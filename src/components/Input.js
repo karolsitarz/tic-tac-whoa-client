@@ -113,12 +113,12 @@ const StyledButton = styled.div`
   justify-content: center;
   align-items: center;
   box-shadow:
-    0 0.5em 1em 0 #00000022,
-    0 0 0 1px #00000014;
+    0 0.5em 1em 0 #00000011,
+    0 0 0 1px #00000005;
   margin: .5em 0;
   background-size: cover;
   background-position: center;
-  background-color: #f7f7f7;
+  background-color: #fff;
   pointer-events: auto;
 
   ${props => props.primary && css`
