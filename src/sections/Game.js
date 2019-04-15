@@ -132,9 +132,41 @@ const StyledSpan = styled.span`
   text-align: center;
 `;
 
+//
+
+const BottomCard = styled.section`
+  background: #f5f5f5;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 3em 0;
+  border-radius: 2em 2em 0 0;
+  box-shadow: 0 0 2em #0000002e;
+`;
+
+const FixedSection = styled.section`
+  min-height: calc(100vh - 4em);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const BlankFixedSection = styled.section`
+  min-height: calc(100vh - 4em);
+  width: 100%;
+`;
+
 export default class Game extends Component {
   constructor (props) {
     super(props);
+    this.hasPlaced = false;
     this.state = {
       // WAIT - PLACE - PICK
       state: 'WAIT',
@@ -161,8 +193,14 @@ export default class Game extends Component {
         <Tic setPickedTic={v => this.setPickedTic(v)} key={'scbf'} small circle blue flat />
       ]
     };
-    socket.receive('GAME_PLACE', e => this.setState({ state: 'PLACE', textNo: 1 }));
-    socket.receive('GAME_PICK', e => this.setState({ state: 'PICK', textNo: 2 }));
+    socket.receive('GAME_PLACE', e => {
+      this.setState({ state: 'PLACE', textNo: 1 });
+      if (!this.hasPlaced) this.hasPlaced = true;
+    });
+    socket.receive('GAME_PICK', e => {
+      this.setState({ state: 'PICK', textNo: 2 });
+      if (this.hasPlaced) this.BottomCard.scrollIntoView({ behavior: 'smooth' });
+    });
     socket.receive('GAME_WAIT', e => this.setState({ state: 'WAIT', textNo: 3 }));
 
     socket.receive('GAME_PLACED', ({ pos, tic }) => {
@@ -223,38 +261,42 @@ export default class Game extends Component {
   render () {
     return (
       <Section>
-        <Grid currentState={this.state.state} wantedState='PLACE'>
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={0} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={1} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={2} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={3} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={4} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={5} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={6} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={7} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={8} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={9} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={10} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={11} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={12} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={13} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={14} />
-          <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={15} />
-          {this.state.placed}
-        </Grid>
-        <Space size={2} />
-        <StyledSpan>
-          {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic'][this.state.textNo]}
-        </StyledSpan>
-        <Space size={1} />
-        <Button>lol i won</Button>
-        <Button primary onClick={e => this.endRound()}>ok</Button>
-        <Space size={2} />
-        <Grid
-          currentState={this.state.state}
-          wantedState='PICK'>
-          {this.state.tics}
-        </Grid>
+        <BlankFixedSection />
+        <FixedSection>
+          <Grid currentState={this.state.state} wantedState='PLACE'>
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={0} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={1} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={2} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={3} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={4} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={5} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={6} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={7} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={8} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={9} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={10} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={11} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={12} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={13} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={14} />
+            <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={15} />
+            {this.state.placed}
+          </Grid>
+          <Space size={2} />
+          <StyledSpan>
+            {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic'][this.state.textNo]}
+          </StyledSpan>
+          <Space size={1} />
+          <Button>lol i won</Button>
+          <Button primary onClick={e => this.endRound()}>ok</Button>
+        </FixedSection>
+        <BottomCard ref={ref => (this.BottomCard = ref)}>
+          <Grid
+            currentState={this.state.state}
+            wantedState='PICK'>
+            {this.state.tics}
+          </Grid>
+        </BottomCard>
       </Section>
     );
   }

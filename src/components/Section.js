@@ -9,5 +9,5 @@ export default styled.div`
   min-height: 100%;
   max-width: 50em;
   margin: auto;
-  padding: 1em;
+  /* padding: 1em; */
 `;
