@@ -172,6 +172,7 @@ export default class Game extends Component {
       state: 'WAIT',
       pickedTic: null,
       pickedPos: null,
+      iWon: false,
       placed: [],
       textNo: 0,
       tics: [
@@ -301,14 +302,21 @@ export default class Game extends Component {
     );
   }
   endRound () {
-    if (this.state.state === 'PICK' && this.state.pickedTic != null) {
-      socket.comm('GAME_PICKED', this.state.pickedTic);
-    } else if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
-      socket.comm('GAME_PLACED', this.state.pickedPos);
+    // if the player thinks he won
+    if (this.state.iWon === true) {
+
+      // else
+    } else {
+      if (this.state.state === 'PICK' && this.state.pickedTic != null) {
+        socket.comm('GAME_PICKED', this.state.pickedTic);
+      } else if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
+        socket.comm('GAME_PLACED', this.state.pickedPos);
+      }
     }
   }
   setPickedTic (data) {
     if (this.state.state !== 'PICK') return;
+    if (this.state.iWon !== false) return;
     this.setState({ pickedTic: data });
 
     const placedTic = data;
@@ -335,6 +343,7 @@ export default class Game extends Component {
 
   setPickedPos (pos) {
     if (this.state.state !== 'PLACE') return;
+    if (this.state.iWon !== false) return;
     this.setState({ pickedPos: pos });
 
     const tic = this.state.pickedTic;
@@ -356,5 +365,9 @@ export default class Game extends Component {
           blue={tic.color === 'blue'} />
       );
     this.setState({ placed: placed });
+  }
+
+  toggleIWon () {
+    this.setState({ iWon: !this.state.iWon });
   }
 }
