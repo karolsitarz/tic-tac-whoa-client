@@ -509,9 +509,9 @@ export default class Game extends Component {
 
     // jesli ma jakas postawiona
     if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
-      socket.comm('GAME_WIN_PLACED', this.state.pickedTic, this.state.pickedPos);
+      socket.comm('GAME_WIN_PLACED', type, this.state.pickedTic, this.state.pickedPos);
     } else {
-      socket.comm('GAME_WIN');
+      socket.comm('GAME_WIN', type);
     }
   }
 }
