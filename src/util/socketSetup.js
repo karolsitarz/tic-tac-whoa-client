@@ -1,4 +1,4 @@
-const socket = new window.WebSocket(`ws://${window.location.hostname}:443`);
+const socket = new window.WebSocket(`ws://${window.location.host}`);
 
 // add the events object
 socket.Events = {};
