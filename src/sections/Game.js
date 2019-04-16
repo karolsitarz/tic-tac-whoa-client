@@ -376,10 +376,10 @@ export default class Game extends Component {
     });
 
     socket.receive('GAME_END_WIN', data => {
-      this.setState({ end: 2 });
+      this.setState({ end: 2, winning: false });
     });
     socket.receive('GAME_END_LOSE', data => {
-      this.setState({ end: 1 });
+      this.setState({ end: 1, winning: false });
     });
   }
   render () {
