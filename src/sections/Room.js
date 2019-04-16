@@ -36,8 +36,8 @@ class RoomWait extends Component {
           ref={e => (this.input = e)}
           readOnly
           value={this.props.currentRoom}
-          style={{ pointerEvents: 'auto' }} />
-        <Button onClick={e => this.copyInput()}>copy</Button>
+          style={{ pointerEvents: 'none', opacity: '0', position: 'absolute' }} />
+        <Button onClick={e => this.copyInput()}>copy id</Button>
       </Section>
     );
   }
