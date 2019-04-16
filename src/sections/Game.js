@@ -193,7 +193,7 @@ const WinningModal = styled.section`
   align-items: center;
   background: white;
   margin: 1em;
-  padding: 2em 0;
+  padding: 2em 1em;
   border-radius: 2em;
   position: absolute;
   left: 0;
@@ -275,7 +275,6 @@ const IconButtonContainer = styled.div`
   justify-content: space-evenly;
   align-items: center;
   width: 100%;
-  padding: 1em;
 `;
 
 export default class Game extends Component {
@@ -425,6 +424,7 @@ export default class Game extends Component {
         <ModalContainer active={this.state.winning}>
           <WinningModal active={this.state.winning}>
             <StyledSpan>pick the type of winning tics</StyledSpan>
+            <Space size={1} />
             <IconButtonContainer>
               <IconButton
                 onClick={e => this.setState({ pickedType: 'color' })}
@@ -466,6 +466,8 @@ export default class Game extends Component {
             <Space size={1} />
             <Button primary onClick={e => this.winning(this.state.pickedType)}>ok</Button>
             <Button onClick={e => this.closeWinning()}>cancel</Button>
+            <Space size={1} />
+            <span style={{ textAlign: 'center', fontSize: '0.8em' }}><b>Careful!</b> Choosing wrong <b>WILL</b> result in losing the game!</span>
           </WinningModal>
         </ModalContainer>
         <ModalContainer active={this.state.end}>
