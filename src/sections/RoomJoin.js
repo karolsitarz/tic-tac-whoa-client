@@ -4,6 +4,7 @@ import Section from '../components/Section';
 import Input, { Button, Or } from '../components/Input';
 import socket from '../util/socketSetup';
 import { connect, changeSection } from '../util/store';
+import setURL from '../util/url';
 
 class RoomJoin extends Component {
   constructor (props) {
@@ -12,11 +13,13 @@ class RoomJoin extends Component {
     socket.receive('ROOM_WAIT', roomID => {
       dispatch(changeSection('RoomWait'));
       dispatch(d => d({ key: 'currentRoom', payload: roomID }));
+      setURL(roomID);
     });
     socket.receive('ROOM_ACCEPT', e => dispatch(changeSection('RoomAccept')));
     socket.receive('LEAVE_ROOM', e => {
       dispatch(changeSection('RoomJoin'));
       dispatch(d => d({ key: 'currentRoom', payload: '' }));
+      setURL();
     });
     socket.receive('GAME_START', e => dispatch(changeSection('Game')));
   }
