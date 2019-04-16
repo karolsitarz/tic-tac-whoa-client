@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
-import { Provider } from './util/store';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducers from './store/reducers';
 import socket from './util/socketSetup';
 import GlobalStyles from './styles/global-styles';
 import Route from './util/Route';
@@ -22,13 +24,13 @@ const Container = styled.div`
 socket.onopen = () => {
   // main App
   const App = props => (
-    <Provider>
+    <Provider store={createStore(reducers)}>
       <Container>
         <GlobalStyles />
-        <Route target={Login} />
-        <Route target={RoomJoin} />
-        <Route target={RoomWait} />
-        <Route target={Game} />
+        <Route target={Login} for='Login' />
+        <Route target={RoomJoin} for='RoomJoin' />
+        <Route target={RoomWait} for='RoomWait' />
+        <Route target={Game} for='Game' />
       </Container>
     </Provider>
   );

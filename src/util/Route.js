@@ -2,7 +2,7 @@ import React from 'react';
 import { CSSTransition } from 'react-transition-group';
 import styled from 'styled-components';
 
-import { connect } from '../util/store';
+import { connect } from 'react-redux';
 
 const StyledDiv = styled.section`
   width: 100%;
@@ -37,9 +37,7 @@ const StyledDiv = styled.section`
 
 const Route = props => (
   <CSSTransition
-    in={props.target != null
-      ? (props.target.name === props.section || props.target.route === props.section)
-      : props.for === props.section}
+    in={props.for === props.section}
     timeout={400}
     classNames='section'
     unmountOnExit >
@@ -49,8 +47,6 @@ const Route = props => (
   </CSSTransition>
 );
 
-const mapStateToProps = state => ({
-  section: state.section
-});
+const mapStateToProps = ({ section }) => ({ section });
 
 export default connect(mapStateToProps)(Route);

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { connect } from '../util/store';
+import { connect } from 'react-redux';
 
 import Section from '../components/Section';
 import { Button } from '../components/Input';

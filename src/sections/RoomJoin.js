@@ -1,27 +1,28 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { changeSection, changeCurrentRoom } from '../store/actions';
 
 import Section from '../components/Section';
 import Input, { Button, Or } from '../components/Input';
 import socket from '../util/socketSetup';
-import { connect, changeSection } from '../util/store';
 import setURL from '../util/url';
 
 class RoomJoin extends Component {
   constructor (props) {
     super(props);
-    const { dispatch } = this.props;
+
     socket.receive('ROOM_WAIT', roomID => {
-      dispatch(changeSection('RoomWait'));
-      dispatch(d => d({ key: 'currentRoom', payload: roomID }));
+      props.changeSection('RoomWait');
+      props.changeCurrentRoom(roomID);
       setURL(roomID);
     });
-    socket.receive('ROOM_ACCEPT', e => dispatch(changeSection('RoomAccept')));
+    socket.receive('ROOM_ACCEPT', e => props.changeSection('RoomAccept'));
     socket.receive('LEAVE_ROOM', e => {
-      dispatch(changeSection('RoomJoin'));
-      dispatch(d => d({ key: 'currentRoom', payload: '' }));
+      props.changeSection('RoomJoin');
+      props.changeCurrentRoom('');
       setURL();
     });
-    socket.receive('GAME_START', e => dispatch(changeSection('Game')));
+    socket.receive('GAME_START', e => props.changeSection('Game'));
   }
   render () {
     return (
@@ -45,4 +46,4 @@ class RoomJoin extends Component {
   }
 }
 
-export default connect(null)(RoomJoin);
+export default connect(null, { changeSection, changeCurrentRoom })(RoomJoin);

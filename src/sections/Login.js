@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { changeSection } from '../store/actions';
 
 import Section from '../components/Section';
 import Input, { Button } from '../components/Input';
 import socket from '../util/socketSetup';
-import { connect, changeSection } from '../util/store';
 import { getIDfromURL } from '../util/url';
 
 class Login extends Component {
   constructor (props) {
     super(props);
-    const { dispatch } = this.props;
     socket.receive('USER_LOGIN_SUCCESS', nickname => {
-      dispatch(changeSection('RoomJoin'));
+      props.changeSection('RoomJoin');
       window.localStorage.nickname = nickname;
       const idURL = getIDfromURL();
       if (idURL != null) socket.comm('USER_JOIN_ROOM', { id: idURL });
@@ -35,4 +35,4 @@ class Login extends Component {
   }
 }
 
-export default connect(null)(Login);
+export default connect(null, { changeSection })(Login);
