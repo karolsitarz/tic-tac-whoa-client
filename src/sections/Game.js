@@ -157,6 +157,7 @@ const FixedSection = styled.section`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  pointer-events: none;
 `;
 
 const BlankFixedSection = styled.section`

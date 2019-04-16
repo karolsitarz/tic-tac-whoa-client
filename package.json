@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack -p",
     "build-d": "webpack -d",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "buildserver": "webpack -p --output-path=../server/src"
   },
   "author": "",
   "license": "ISC",
