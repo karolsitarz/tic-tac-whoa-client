@@ -130,6 +130,7 @@ const StyledSpan = styled.span`
   font-size: 0.8em;
   font-weight: bold;
   text-align: center;
+  padding: 0 1em;
 `;
 
 //
