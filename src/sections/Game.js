@@ -171,7 +171,7 @@ const ModalContainer = styled.div`
   top: 0;
   width: 100vw;
   height: 100vh;
-  pointer-events: ${props => props.winning ? 'all' : 'none'};
+  pointer-events: ${props => props.active ? 'all' : 'none'};
 
   &::before {
     content: "";
@@ -181,7 +181,7 @@ const ModalContainer = styled.div`
     width: 100%;
     height: 100%;
     background-color: #0003;
-    opacity: ${props => props.winning ? '1' : '0'};
+    opacity: ${props => props.active ? '1' : '0'};
     transition: opacity .3s ease;
   }
 `;
@@ -202,10 +202,32 @@ const WinningModal = styled.section`
   transition:
     opacity .3s ease,
     transform .3s ease;
-  opacity: ${props => props.winning ? '1' : '0'};
-  transform: ${props => props.winning
+  opacity: ${props => props.active ? '1' : '0'};
+  transform: ${props => props.active
     ? 'translate3d(0,0,0)'
     : 'translate3d(0,calc(100% + 1em),0)'};
+`;
+
+const EndGameModal = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  margin: 1em;
+  padding: 2em 0;
+  border-radius: 2em;
+  position: absolute;
+  left: calc(50% - 1em);
+  top: 50%;
+  width: calc(100% - 2em);
+  transition:
+    opacity .3s ease,
+    transform .3s ease;
+  opacity: ${props => props.active ? '1' : '0'};
+  transform: ${props => props.active
+    ? 'translate(-50%, -50%) scale(1)'
+    : 'translate(-50%, -50%) scale(0)'};
 `;
 
 //
@@ -266,6 +288,7 @@ export default class Game extends Component {
       pickedTic: null,
       pickedPos: null,
       winning: false,
+      end: 0,
       pickedType: null,
       placed: [],
       textNo: 0,
@@ -352,6 +375,13 @@ export default class Game extends Component {
       newTics[i] = React.cloneElement(newTics[i], { ...newTics[i].props, disabled: true, current: true });
       this.setState({ tics: newTics });
     });
+
+    socket.receive('GAME_END_WIN', data => {
+      this.setState({ end: 2 });
+    });
+    socket.receive('GAME_END_LOSE', data => {
+      this.setState({ end: 1 });
+    });
   }
   render () {
     return (
@@ -383,7 +413,7 @@ export default class Game extends Component {
           </StyledSpan>
           <Space size={1} />
           <Button primary onClick={e => this.endRound()}>ok</Button>
-          <Button onClick={e => this.setState({ winning: true, pickedType: null })}>I won</Button>
+          <Button onClick={e => this.openWinning()}>I won</Button>
         </FixedSection>
         <BottomCard ref={ref => (this.BottomCard = ref)}>
           <Grid
@@ -392,8 +422,8 @@ export default class Game extends Component {
             {this.state.tics}
           </Grid>
         </BottomCard>
-        <ModalContainer winning={this.state.winning}>
-          <WinningModal winning={this.state.winning}>
+        <ModalContainer active={this.state.winning}>
+          <WinningModal active={this.state.winning}>
             <StyledSpan>pick the type of winning tics</StyledSpan>
             <IconButtonContainer>
               <IconButton
@@ -435,13 +465,22 @@ export default class Game extends Component {
             </IconButtonContainer>
             <Space size={1} />
             <Button primary onClick={e => this.winning(this.state.pickedType)}>ok</Button>
-            <Button onClick={e => this.setState({ winning: false, pickedType: null })}>cancel</Button>
+            <Button onClick={e => this.closeWinning()}>cancel</Button>
           </WinningModal>
+        </ModalContainer>
+        <ModalContainer active={this.state.end}>
+          <EndGameModal active={this.state.end}>
+            <h2>{['', 'You lost! :(', 'You won! :D'][this.state.end]}</h2>
+            <span>{['', 'Too bad! Better luck next time!', 'Great job! You did awesome!'][this.state.end]}</span>
+            <Space size={1} />
+            <Button primary onClick={e => socket.comm('USER_LEAVE_ROOM')}>leave</Button>
+          </EndGameModal>
         </ModalContainer>
       </Section>
     );
   }
   endRound () {
+    if (this.state.end !== 0) return;
     if (this.state.winning) return;
 
     if (this.state.state === 'PICK' && this.state.pickedTic != null) {
@@ -451,6 +490,7 @@ export default class Game extends Component {
     }
   }
   setPickedTic (data) {
+    if (this.state.end !== 0) return;
     if (this.state.state !== 'PICK') return;
     if (this.state.winning !== false) return;
     this.setState({ pickedTic: data });
@@ -478,6 +518,7 @@ export default class Game extends Component {
   }
 
   setPickedPos (pos) {
+    if (this.state.end !== 0) return;
     if (this.state.state !== 'PLACE') return;
     if (this.state.winning !== false) return;
     this.setState({ pickedPos: pos });
@@ -504,6 +545,7 @@ export default class Game extends Component {
   }
 
   winning (type) {
+    if (this.state.end !== 0) return;
     if (!this.state.winning) return;
     if (this.state.pickedType !== 'shape' && this.state.pickedType !== 'size' && this.state.pickedType !== 'hole' && this.state.pickedType !== 'color') return;
 
@@ -517,5 +559,14 @@ export default class Game extends Component {
     } else {
       socket.comm('GAME_WIN', type);
     }
+  }
+
+  openWinning () {
+    if (this.state.end !== 0) return;
+    this.setState({ winning: true, pickedType: null });
+  }
+  closeWinning () {
+    if (this.state.end !== 0) return;
+    this.setState({ winning: false, pickedType: null });
   }
 }
