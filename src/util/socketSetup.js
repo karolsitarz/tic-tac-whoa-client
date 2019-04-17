@@ -1,4 +1,4 @@
-const socket = new window.WebSocket(`ws://${window.location.host}`);
+const socket = new window.WebSocket(`wss://${window.location.host}`);
 
 // add the events object
 socket.Events = {};
