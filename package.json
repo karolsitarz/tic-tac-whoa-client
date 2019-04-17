@@ -8,7 +8,7 @@
     "build": "webpack -p",
     "build-d": "webpack -d",
     "start": "webpack-dev-server",
-    "buildserver": "webpack -p --output-path=../server/src"
+    "buildserver": "webpack -p --output-path=../server/src/static"
   },
   "author": "",
   "license": "ISC",
