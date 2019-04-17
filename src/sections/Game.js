@@ -383,6 +383,13 @@ export default class Game extends Component {
     socket.receive('GAME_END_LOSE', data => {
       this.setState({ end: 1, winning: false });
     });
+    socket.receive('GAME_END_DRAW', data => {
+      this.setState({ end: 3, winning: false });
+    });
+    socket.receive('GAME_DRAW_WAIT', e => {
+      this.setState({ state: 'PLACE', textNo: 4 });
+      if (!this.hasPlaced) this.hasPlaced = true;
+    });
   }
   render () {
     return (
@@ -410,7 +417,7 @@ export default class Game extends Component {
           </Grid>
           <Space size={2} />
           <StyledSpan>
-            {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic'][this.state.textNo]}
+            {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic', 'find the winning combination!'][this.state.textNo]}
           </StyledSpan>
           <Space size={1} />
           <Button primary onClick={e => this.endRound()}>ok</Button>
@@ -474,8 +481,8 @@ export default class Game extends Component {
         </ModalContainer>
         <ModalContainer active={this.state.end}>
           <EndGameModal active={this.state.end}>
-            <h2>{['', 'You lost! :(', 'You won! :D'][this.state.end]}</h2>
-            <span>{['', 'Too bad! Better luck next time!', 'Great job! You did awesome!'][this.state.end]}</span>
+            <h2>{['', 'You lost! :(', 'You won! :D', 'You tied!'][this.state.end]}</h2>
+            <span>{['', 'Too bad! Better luck next time!', 'Great job! You did awesome!', 'Great minds think alike!'][this.state.end]}</span>
             <Space size={1} />
             <Button primary onClick={e => socket.comm('USER_LEAVE_ROOM')}>leave</Button>
           </EndGameModal>
@@ -489,7 +496,7 @@ export default class Game extends Component {
 
     if (this.state.state === 'PICK' && this.state.pickedTic != null) {
       socket.comm('GAME_PICKED', this.state.pickedTic);
-    } else if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
+    } else if (this.state.state === 'PLACE' && this.state.pickedPos != null && this.state.textNo !== 4) {
       socket.comm('GAME_PLACED', this.state.pickedPos);
     }
   }
