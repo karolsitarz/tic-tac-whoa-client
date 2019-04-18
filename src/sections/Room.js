@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 
 import Section from '../components/Section';
-import { Button } from '../components/Input';
+import { Button, Or } from '../components/Input';
 import socket from '../util/socketSetup';
 
 import Loading from '../components/Loading';
@@ -16,9 +16,29 @@ const StyledSpan = styled.span`
   text-align: center;
 `;
 
+const StyledInput = styled.input`
+  border: 0;
+  padding: 1em;
+  text-align: center;
+  font-weight: bold;
+  background: #f5f5f5;
+  border-radius: 5em;
+  width: 10em;
+  margin-top: -1em;
+  &::selection {
+    background: transparent;
+  }
+  &:hover {
+    box-shadow: 0 0 0 5px #c262be88;
+  }
+  box-shadow: 0 0 0 2px #c262be00;
+  transition: box-shadow .3s ease;
+`;
+
 class RoomWait extends Component {
-  copyInput () {
-    this.input.select();
+  copyInput (e) {
+    if (!e || !e.target) return;
+    e.target.select();
     document.execCommand('copy');
   }
   render () {
@@ -32,12 +52,12 @@ class RoomWait extends Component {
           onClick={e => socket.comm('USER_LEAVE_ROOM')}>
           leave
         </Button>
-        <input
-          ref={e => (this.input = e)}
+        <Space size={1} />
+        <Or text='tap to copy ID' />
+        <StyledInput
+          onClick={e => this.copyInput(e)}
           readOnly
-          value={this.props.currentRoom}
-          style={{ pointerEvents: 'none', opacity: '0', position: 'absolute' }} />
-        <Button onClick={e => this.copyInput()}>copy id</Button>
+          value={this.props.currentRoom} />
       </Section>
     );
   }

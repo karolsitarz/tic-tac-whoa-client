@@ -29,7 +29,7 @@ class RoomJoin extends Component {
       <Section>
         <Input
           sendValue={v => (this.input = v)}
-          maxLength={16}
+          maxLength={6}
           placeholder='room ID' />
         <Button
           onClick={e => socket.comm('USER_JOIN_ROOM', { id: this.input })}>

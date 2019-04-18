@@ -168,5 +168,5 @@ const StyledOr = styled.div`
 `;
 
 export const Or = props => (
-  <StyledOr><span>or</span></StyledOr>
+  <StyledOr><span>{props.text ? props.text : 'or'}</span></StyledOr>
 );
