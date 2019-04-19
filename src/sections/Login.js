@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { changeSection } from '../store/actions';
 import styled, { keyframes } from 'styled-components';
+import ping from '../util/pingSocket';
 
 import Section from '../components/Section';
 import Space from '../components/Space';
@@ -33,6 +34,8 @@ class Login extends Component {
       window.localStorage.nickname = nickname;
       const idURL = getIDfromURL();
       if (idURL != null) socket.comm('USER_JOIN_ROOM', { id: idURL });
+
+      ping(socket);
     });
   }
   render () {

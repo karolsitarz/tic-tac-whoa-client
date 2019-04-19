@@ -30,7 +30,11 @@ socket.comm = function (message = '', data = '') {
 
     // add outgoing colored console log
     if (window.localStorage.debug === 'true') {
-      console.log(`%c→ ${message}`, `color: ${consoleColor}`, data);
+      if (message !== 'CONNECTION_PING') {
+        console.log(`%c→ ${message}`, `color: ${consoleColor}`, data);
+      } else {
+        console.log(`%c→ ${message}`, 'color: #DDD', data);
+      }
     }
   }
 };
@@ -44,7 +48,11 @@ socket.addEventListener('message', (connection) => {
   }
   // add incoming colored console log
   if (window.localStorage.debug === 'true') {
-    console.log(`\t%c← ${data.message}`, 'color: #C11B1B', data);
+    if (data.message !== 'CONNECTION_PONG') {
+      console.log(`\t%c← ${data.message}`, 'color: #C11B1B', data);
+    } else {
+      console.log(`\t%c← ${data.message}`, 'color: #ccc', data);
+    }
   }
 
   // execute callback
