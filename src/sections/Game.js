@@ -420,8 +420,13 @@ export default class Game extends Component {
             {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic', 'find the winning combination!'][this.state.textNo]}
           </StyledSpan>
           <Space size={1} />
-          <Button primary onClick={e => this.endRound()}>ok</Button>
-          <Button onClick={e => this.openWinning()}>I won</Button>
+          <Button
+            hidden={this.state.state === 'WAIT'}
+            primary
+            onClick={e => this.endRound()}>ok</Button>
+          <Button
+            hidden={this.state.state === 'WAIT' && this.state.textNo !== 4}
+            onClick={e => this.openWinning()}>I won</Button>
         </FixedSection>
         <BottomCard ref={ref => (this.BottomCard = ref)}>
           <Grid
@@ -574,6 +579,8 @@ export default class Game extends Component {
 
   openWinning () {
     if (this.state.end !== 0) return;
+    if (this.state.state !== 'PICK' && this.state.state !== 'PLACE') return;
+
     this.setState({ winning: true, pickedType: null });
   }
   closeWinning () {

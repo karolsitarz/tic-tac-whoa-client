@@ -120,6 +120,8 @@ const StyledButton = styled.div`
   background-position: center;
   background-color: #fff;
   pointer-events: auto;
+  opacity: ${props => props.hidden ? 0 : 1};
+  transition: opacity .3s ease;
 
   ${props => props.primary && css`
     background-image: linear-gradient(to right, #fc8ca1, #dc64b9, #8c5dc7, #5b80cc);
@@ -138,7 +140,8 @@ const StyledButton = styled.div`
 export const Button = props => (
   <StyledButton
     onClick={props.onClick}
-    primary={props.primary} >
+    primary={props.primary}
+    hidden={props.hidden} >
     {props.children}
   </StyledButton>
 );
