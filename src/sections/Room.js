@@ -29,7 +29,7 @@ const StyledInput = styled.input`
     background: transparent;
   }
   &:hover {
-    box-shadow: 0 0 0 5px #c262be88;
+    box-shadow: 0 0 0 5px #8562c83d;
   }
   box-shadow: 0 0 0 2px #c262be00;
   transition: box-shadow .3s ease;
