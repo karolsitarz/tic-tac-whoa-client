@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { changeSection, changeCurrentRoom } from '../store/actions';
 
 import Section from '../components/Section';
+import Space from '../components/Space';
 import Input, { Button, Or } from '../components/Input';
 import socket from '../util/socketSetup';
 import setURL from '../util/url';
@@ -35,7 +36,9 @@ class RoomJoin extends Component {
           onClick={e => socket.comm('USER_JOIN_ROOM', { id: this.input })}>
           join
         </Button>
+        <Space size={2} />
         <Or />
+        <Space size={2} />
         <Button
           onClick={e => socket.comm('USER_CREATE_ROOM')}
           primary>

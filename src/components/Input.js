@@ -154,7 +154,6 @@ const StyledOr = styled.div`
   align-items: center;
   text-transform: uppercase;
   font-size: 0.75em;
-  padding: 2em 0;
   width: 50%;
 
   &::after, &::before {

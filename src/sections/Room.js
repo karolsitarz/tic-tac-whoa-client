@@ -24,7 +24,6 @@ const StyledInput = styled.input`
   background: #f5f5f5;
   border-radius: 5em;
   width: 10em;
-  margin-top: -1em;
   &::selection {
     background: transparent;
   }
@@ -36,11 +35,6 @@ const StyledInput = styled.input`
 `;
 
 class RoomWait extends Component {
-  copyInput (e) {
-    if (!e || !e.target) return;
-    e.target.select();
-    document.execCommand('copy');
-  }
   render () {
     return (
       <Section>
@@ -52,12 +46,25 @@ class RoomWait extends Component {
           onClick={e => socket.comm('USER_LEAVE_ROOM')}>
           leave
         </Button>
+        <Space size={2} />
+        <Or text='tap to copy ID/URL' />
         <Space size={1} />
-        <Or text='tap to copy ID' />
         <StyledInput
-          onClick={e => this.copyInput(e)}
+          onClick={e => {
+            e.target.select();
+            document.execCommand('copy');
+          }}
           readOnly
           value={this.props.currentRoom} />
+        <Space size={0.5} />
+        <StyledInput
+          onClick={e => {
+            e.target.value = window.location.href;
+            e.target.select();
+            document.execCommand('copy');
+          }}
+          readOnly
+          value={window.location.href} />
       </Section>
     );
   }

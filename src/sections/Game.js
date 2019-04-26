@@ -9,8 +9,8 @@ import Space from '../components/Space';
 
 const ticFadeIn = keyframes`
   from {
-    opacity: 0.5;
-    transform: scale(0);
+    opacity: 0;
+    transform: scale(0.5);
   }
 `;
 
