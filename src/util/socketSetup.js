@@ -1,6 +1,6 @@
 const socket = window.location.hostname !== '127.0.0.1'
   ? new window.WebSocket(`wss://${window.location.host}`)
-  : new window.WebSocket(`ws://${window.location.host}`);
+  : new window.WebSocket(`ws://${window.location.hostname}:8080`);
 
 // add the events object
 socket.Events = {};
