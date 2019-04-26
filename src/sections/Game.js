@@ -40,8 +40,8 @@ const StyledTic = styled.div`
     : 'linear-gradient(to right bottom, #ff76ad, #ffb58c)'};
     box-shadow: ${props => props.current === true
     ? props => props.red
-      ? '0 0 0 0.35em #ff969c88'
-      : '0 0 0 0.35em #5988cc88'
+      ? '0 0 0 0.5em #ff969c88'
+      : '0 0 0 0.5em #5988cc88'
     : '0 0 0 0 #fff8'};
     transition: box-shadow .3s ease;
 
