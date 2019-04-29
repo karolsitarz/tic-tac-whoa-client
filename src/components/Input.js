@@ -119,7 +119,7 @@ const StyledButton = styled.div`
   background-size: cover;
   background-position: center;
   background-color: #fff;
-  pointer-events: auto;
+  pointer-events: ${props => props.hidden ? 'none' : 'auto'};
   opacity: ${props => props.hidden ? 0 : 1};
   transition: opacity .3s ease;
 

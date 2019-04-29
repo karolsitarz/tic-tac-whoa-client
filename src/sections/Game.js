@@ -25,6 +25,7 @@ const StyledTic = styled.div`
   transition: opacity .3s ease;
   opacity: ${props => props.current === true ? '1' : ''};
   animation: ${ticFadeIn} .2s ease backwards;
+  opacity: ${props => props.winning ? '1 !important' : ''};
 
   &::before {
     content: "";
@@ -78,16 +79,6 @@ const StyledTic = styled.div`
   }
 `;
 
-const Grid = styled.div`
-  display: grid;
-  place-items: center;
-  grid-template: repeat(4, 1fr) / repeat(4, 1fr);
-  grid-gap: 1em;
-  pointer-events: ${props => props.currentState === props.wantedState ? 'auto' : ''};
-  opacity: ${props => props.currentState === props.wantedState ? '1' : '0.5'};
-  transition: opacity .3s ease;
-`;
-
 const StyledGridSpot = styled.div`
   width: 15vmin;
   height: 15vmin;
@@ -95,6 +86,7 @@ const StyledGridSpot = styled.div`
   max-height: 3em;
   flex-shrink: 0;
   grid-area: ${props => props.col} / ${props => props.row} / span 1 / span 1;
+  transition: opacity .3s ease;
 
   &::before {
     content: "";
@@ -112,6 +104,19 @@ const StyledGridSpot = styled.div`
 `;
 
 const GridSpot = ({ pos, setPickedPos }) => <StyledGridSpot col={Math.floor(pos / 4 + 1)} row={pos % 4 + 1} onClick={e => setPickedPos(pos)} />;
+
+const Grid = styled.div`
+  display: grid;
+  place-items: center;
+  grid-template: repeat(4, 1fr) / repeat(4, 1fr);
+  grid-gap: 1em;
+  pointer-events: ${props => props.currentState === props.wantedState ? 'auto' : ''};
+  opacity: ${props => props.currentState === props.wantedState ? '1' : '0.5'};
+  transition: opacity .3s ease;
+  & > ${StyledTic} {
+    opacity: ${props => props.hideTicsEnd ? 0.2 : ''};
+  }
+`;
 
 const Tic = props =>
   <StyledTic {...props}
@@ -131,6 +136,9 @@ const StyledSpan = styled.span`
   font-weight: bold;
   text-align: center;
   padding: 0 1em;
+  transition: opacity .3s ease;
+  opacity: ${props => props.hidden ? 0 : 1};
+  pointer-events: ${props => props.hidden ? 'none' : 'auto'};
 `;
 
 //
@@ -144,6 +152,9 @@ const BottomCard = styled.section`
   padding: 3em 0;
   border-radius: 2em 2em 0 0;
   box-shadow: 0 0 2em #0000002e;
+  transition: opacity .3s ease;
+  opacity: ${props => props.hidden ? 0 : 1};
+  pointer-events: ${props => props.hidden ? 'none' : 'auto'};
 `;
 
 const FixedSection = styled.section`
@@ -215,21 +226,23 @@ const EndGameModal = styled.section`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: white;
+  background: whitesmoke;
   margin: 1em;
-  padding: 2em 0;
+  padding: 2em 1em;
+  text-align: center;
   border-radius: 2em;
-  position: absolute;
+  position: fixed;
   left: calc(50% - 1em);
-  top: 50%;
+  bottom: 0;
   width: calc(100% - 2em);
   transition:
     opacity .3s ease,
     transform .3s ease;
   opacity: ${props => props.active ? '1' : '0'};
+  box-shadow: 0 1em 2em #00000026;
   transform: ${props => props.active
-    ? 'translate(-50%, -50%) scale(1)'
-    : 'translate(-50%, -50%) scale(0)'};
+    ? 'translate(-50%, 0) scale(1)'
+    : 'translate(-50%, calc(100% + 1em)) scale(0.8)'};
 `;
 
 //
@@ -333,6 +346,7 @@ export default class Game extends Component {
               gridArea: `${Math.floor(pos / 4 + 1)} / ${pos % 4 + 1} / span 1 / span 1`
             }}
             key={pos}
+            pos={pos}
             big={tic.size === 'big'}
             small={tic.size === 'small'}
             circle={tic.shape === 'circle'}
@@ -377,11 +391,19 @@ export default class Game extends Component {
       this.setState({ tics: newTics });
     });
 
-    socket.receive('GAME_END_WIN', data => {
-      this.setState({ end: 2, winning: false });
+    socket.receive('GAME_END_WIN', pos => {
+      const placed = this.state.placed.map(tic => {
+        if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
+        else return tic;
+      });
+      this.setState({ end: 2, state: 'PLACE', winning: false, placed });
     });
-    socket.receive('GAME_END_LOSE', data => {
-      this.setState({ end: 1, winning: false });
+    socket.receive('GAME_END_LOSE', pos => {
+      const placed = this.state.placed.map(tic => {
+        if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
+        else return tic;
+      });
+      this.setState({ end: 1, state: 'PLACE', winning: false, placed });
     });
     socket.receive('GAME_END_DRAW', data => {
       this.setState({ end: 3, winning: false });
@@ -396,7 +418,10 @@ export default class Game extends Component {
       <Section>
         <BlankFixedSection />
         <FixedSection>
-          <Grid currentState={this.state.state} wantedState='PLACE'>
+          <Grid
+            hideTicsEnd={this.state.end !== 0}
+            currentState={this.state.state}
+            wantedState='PLACE' >
             <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={0} />
             <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={1} />
             <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={2} />
@@ -416,19 +441,21 @@ export default class Game extends Component {
             {this.state.placed}
           </Grid>
           <Space size={2} />
-          <StyledSpan>
+          <StyledSpan hidden={this.state.end !== 0}>
             {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic', 'find the winning combination!'][this.state.textNo]}
           </StyledSpan>
           <Space size={1} />
           <Button
-            hidden={this.state.state === 'WAIT'}
+            hidden={this.state.state === 'WAIT' || this.state.end !== 0}
             primary
             onClick={e => this.endRound()}>ok</Button>
           <Button
-            hidden={this.state.state === 'WAIT' && this.state.textNo !== 4}
+            hidden={(this.state.state === 'WAIT' && this.state.textNo !== 4) || this.state.end !== 0}
             onClick={e => this.openWinning()}>I won</Button>
         </FixedSection>
-        <BottomCard ref={ref => (this.BottomCard = ref)}>
+        <BottomCard
+          hidden={this.state.end !== 0}
+          ref={ref => (this.BottomCard = ref)}>
           <Grid
             currentState={this.state.state}
             wantedState='PICK'>
@@ -484,14 +511,12 @@ export default class Game extends Component {
             <span style={{ textAlign: 'center', fontSize: '0.8em' }}><b>Careful!</b> Choosing wrong <b>WILL</b> result in losing the game!</span>
           </WinningModal>
         </ModalContainer>
-        <ModalContainer active={this.state.end}>
-          <EndGameModal active={this.state.end}>
-            <h2>{['', 'You lost! :(', 'You won! :D', 'You tied!'][this.state.end]}</h2>
-            <span>{['', 'Too bad! Better luck next time!', 'Great job! You did awesome!', 'Great minds think alike!'][this.state.end]}</span>
-            <Space size={1} />
-            <Button primary onClick={e => socket.comm('USER_LEAVE_ROOM')}>leave</Button>
-          </EndGameModal>
-        </ModalContainer>
+        <EndGameModal active={this.state.end}>
+          <h2>{['', 'You lost! :(', 'You won! :D', 'You tied!'][this.state.end]}</h2>
+          <span>{['', 'Too bad! Better luck next time!', 'Great job! You did awesome!', 'Great minds think alike!'][this.state.end]}</span>
+          <Space size={1} />
+          <Button primary onClick={e => socket.comm('USER_LEAVE_ROOM')}>leave</Button>
+        </EndGameModal>
       </Section>
     );
   }
