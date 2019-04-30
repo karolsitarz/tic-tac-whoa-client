@@ -34,6 +34,7 @@ socket.onopen = () => {
   const App = props => (
     <ThemeProvider theme={theme[props.theme]}>
       <Container>
+        { document.head.querySelector('meta[name="theme-color"]').setAttribute('content', theme[props.theme].base) }
         <GlobalStyles />
         <Route target={Login} for='Login' />
         <Route target={RoomJoin} for='RoomJoin' />
