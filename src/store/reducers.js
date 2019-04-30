@@ -18,7 +18,23 @@ const currentRoomReducer = (currentRoom = '', action) => {
   return currentRoom;
 };
 
+const theme = theme => {
+  if (theme == null) return window.localStorage.theme;
+  else window.localStorage.theme = theme;
+};
+
+const themeReducer = (currentTheme = (theme() != null ? theme() : 'light'), action) => {
+  if (action.type === 'THEME_TOGGLE') {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+    theme(newTheme);
+    return newTheme;
+  }
+  return currentTheme;
+};
+
 export default combineReducers({
   section: sectionReducer,
-  currentRoom: currentRoomReducer
+  currentRoom: currentRoomReducer,
+  theme: themeReducer
 });

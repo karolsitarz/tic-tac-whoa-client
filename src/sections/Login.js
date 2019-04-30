@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { changeSection } from '../store/actions';
+import { changeSection, toggleTheme } from '../store/actions';
 import styled, { keyframes } from 'styled-components';
 import ping from '../util/pingSocket';
 
@@ -18,7 +18,7 @@ const FadeIn = keyframes`
 `;
 
 const Title = styled.h1`
-  background-image: linear-gradient(to right, #fc8ca1, #dc64b9, #8c5dc7, #5b80cc);
+  background-image: linear-gradient(to right, ${props => props.theme.gradient});
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -52,9 +52,12 @@ class Login extends Component {
           onClick={e => socket.comm('USER_LOGIN_PROMPT', { username: this.input })}
           primary>
           jump in!</Button>
+        <Button
+          onClick={e => this.props.toggleTheme()} >
+          toggle theme</Button>
       </Section>
     );
   }
 }
 
-export default connect(null, { changeSection })(Login);
+export default connect(null, { changeSection, toggleTheme })(Login);

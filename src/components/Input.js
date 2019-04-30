@@ -12,11 +12,11 @@ const TextInputSpan = styled.span`
   transition: opacity .3s ease, transform .3s ease;
   transform: translate3d(-50%,-50%,0);
   opacity: .5;
-  color: #666;
+  color: ${props => props.theme.main};
   
   &::before {
     content: "";
-    background: #ebebeb;
+    background: ${props => props.theme.inputPlate};
     position: absolute;
     width: calc(100% + 2em);
     height: calc(100% + .5em);
@@ -34,7 +34,7 @@ const StyledTextInput = styled.input`
   overflow: hidden;
   padding: .75em 2em;
   display: inline-block;
-  background-color: #f7f7f7;
+  background-color: ${props => props.theme.input};
   border: 0;
   text-align: center;
   font-weight: 700;
@@ -113,23 +113,23 @@ const StyledButton = styled.div`
   justify-content: center;
   align-items: center;
   box-shadow:
-    0 0.5em 1em 0 #00000011,
+    0 0.5em 1em 0 ${props => props.theme.lightShadow},
     0 0 0 1px #00000005;
   margin: .5em 0;
   background-size: cover;
   background-position: center;
-  background-color: #fff;
+  background-color: ${props => props.theme.secondaryButton};
   pointer-events: ${props => (props.hidden || props.disabled) ? 'none' : 'auto'};
   opacity: ${props => props.hidden ? 0 : props.disabled ? 0.3 : 1};
   transition: opacity .3s ease;
 
   ${props => props.primary && css`
-    background-image: linear-gradient(to right, #fc8ca1, #dc64b9, #8c5dc7, #5b80cc);
-    box-shadow: 0 0.5em 1em 0 #00000022;
+    background-image: linear-gradient(to right, ${props => props.theme.gradient});
+    /* box-shadow: 0 0.5em 1em 0 #00000022; */
   `}
 
-  color: ${props => props.primary ? '#fff' : '#aaa'};
-  fill: ${props => props.primary ? '#fff' : '#aaa'};
+  color: ${props => props.primary ? props.theme.primaryButtonText : props.theme.buttonText};
+  fill: ${props => props.primary ? props.theme.primaryButtonText : props.theme.buttonText};
 
   & svg {
     height: 1em;
@@ -160,7 +160,7 @@ const StyledOr = styled.div`
   &::after, &::before {
     content: "";
     flex-grow: 1;
-    background: #eee;
+    background: ${props => props.theme.inputPlate};
     height: 0.2em;
   }
   > span {

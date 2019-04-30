@@ -40,7 +40,7 @@ export default createGlobalStyle`
     font-family: 'Work Sans', Helvetica, sans-serif;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-tap-highlight-color: transparent;
-    color: #777;
+    color: ${props => props.theme.main};
   }
   *:not(input) {
     -webkit-touch-callout: none;
@@ -59,7 +59,7 @@ export default createGlobalStyle`
     width: 100%;
     height: 100%;
     overscroll-behavior: contain;
-    background: #fff;
+    background: ${props => props.theme.base};
     pointer-events: none;
   }
   h1, h2, h3, h4, h5, h6 {

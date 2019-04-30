@@ -21,7 +21,7 @@ const StyledInput = styled.input`
   padding: 1em;
   text-align: center;
   font-weight: bold;
-  background: #f5f5f5;
+  background: ${props => props.theme.input};
   border-radius: 5em;
   width: 10em;
   &::selection {

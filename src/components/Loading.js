@@ -16,7 +16,6 @@ export default styled.div`
   width: 3em;
   height: 3em;
   border-radius: 20%;
-  background: #ddd;
   animation: ${spin} 1.5s linear infinite;
   overflow: hidden;
   &::after {
@@ -27,7 +26,7 @@ export default styled.div`
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
-    background: #fff;
+    background: ${props => props.theme.base};
     border-radius: 50%;
   }
   &::before {
@@ -38,7 +37,7 @@ export default styled.div`
     width: 145%;
     height: 145%;
     transform: translate(-50%,-50%);
-    background-image: linear-gradient(to right, #fc8ca1, #dc64b9, #8c5dc7, #5b80cc);
+    background-image: linear-gradient(to right, ${props => props.theme.gradient});
     animation: ${bgspin} 1s linear infinite;
   }
 `;

@@ -33,17 +33,16 @@ const StyledTic = styled.div`
     width: 100%;
     height: 100%;
     pointer-events: none;
-    background-color: #eee;
     background-position: center;
     background-size: cover;
     background-image: ${props => props.blue
-    ? 'linear-gradient(to right bottom, #48afcc, #6a62cc)'
-    : 'linear-gradient(to right bottom, #ff76ad, #ffb58c)'};
+    ? `linear-gradient(to right bottom, ${props.theme.blueGradient})`
+    : `linear-gradient(to right bottom, ${props.theme.redGradient})`};
     box-shadow: ${props => props.current === true
-    ? props => props.red
-      ? '0 0 0 0.5em #ff969c88'
-      : '0 0 0 0.5em #5988cc88'
-    : '0 0 0 0 #fff8'};
+    ? props => props.blue
+      ? `0 0 0 0.4em ${props.theme.blue}88`
+      : `0 0 0 0.4em ${props.theme.red}88`
+    : `0 0 0 0 ${props.theme.base}8`};
     transition: box-shadow .3s ease;
 
     transform: ${props => props.big
@@ -57,7 +56,7 @@ const StyledTic = styled.div`
 
   &::after {
     content: "";
-    background-color: #fff;
+    background-color: ${props => props.theme.base};
     position: absolute;
     height: 50%;
     width: 50%;
@@ -71,10 +70,10 @@ const StyledTic = styled.div`
     : (props.big
       ? 'translate(-50%,-50%) scale(1)' : 'translate(-50%,-50%) scale(calc(1 / 3 * 2))')};
     box-shadow: ${props => props.current === true
-    ? props => props.red
-      ? '0 0 0 0.35em #ff969c88 inset'
-      : '0 0 0 0.35em #5988cc88 inset'
-    : '0 0 0 0 #fff8 inset'};
+    ? props => props.blue
+      ? `0 0 0 0.4em ${props.theme.blue}88 inset`
+      : `0 0 0 0.4em ${props.theme.red}88 inset`
+    : `0 0 0 0 ${props.theme.base}8 inset`};
     transition: box-shadow .3s ease;
   }
 `;
@@ -91,8 +90,7 @@ const StyledGridSpot = styled.div`
   &::before {
     content: "";
     position: absolute;
-    background-color: #000;
-    opacity: 0.08;
+    background-color: ${props => props.theme.lightShadow};
     height: 50%;
     width: 50%;
     left: 50%;
@@ -144,7 +142,7 @@ const StyledSpan = styled.span`
 //
 
 const BottomCard = styled.section`
-  background: #f5f5f5;
+  background: ${props => props.theme.input};
   width: 100%;
   justify-content: center;
   align-items: center;
@@ -155,6 +153,10 @@ const BottomCard = styled.section`
   transition: opacity .3s ease;
   opacity: ${props => props.hidden ? 0 : 1};
   pointer-events: ${props => props.hidden ? 'none' : 'auto'};
+
+  & ${StyledTic}::after {
+    background-color: ${props => props.theme.input};
+  }
 `;
 
 const FixedSection = styled.section`
@@ -193,7 +195,7 @@ const ModalContainer = styled.div`
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: #0003;
+    background-color: ${props => props.theme.hardShadow};
     opacity: ${props => props.active ? '1' : '0'};
     transition: opacity .3s ease;
   }
@@ -204,7 +206,7 @@ const WinningModal = styled.section`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: white;
+  background: ${props => props.theme.base};
   margin: 1em;
   padding: 2em 1em;
   border-radius: 2em;
@@ -226,7 +228,7 @@ const EndGameModal = styled.section`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: whitesmoke;
+  background: ${props => props.theme.input};
   margin: 1em;
   padding: 2em 1em;
   text-align: center;
@@ -262,7 +264,7 @@ const IconButton = styled.div`
     left: 50%;
     top: 50%;
     position: absolute;
-    background-color: #00000008;
+    background-color: ${props => props.theme.lightShadow};
     transition: transform .3s ease, opacity .3s ease;
     border-radius: 50%;
     pointer-events: none;
@@ -279,7 +281,10 @@ const IconButton = styled.div`
     width: 65%;
     height: 65%;
     pointer-events: none;
-    fill: #e4e4e4;
+    fill: ${props => props.theme.icon};
+    > path:nth-child(2) {
+      fill: ${props => props.type === 'color' ? props.theme.icon2 : ''};
+    }
   }
   width: 20%;
   max-height: 100px;  
@@ -484,7 +489,7 @@ export default class Game extends Component {
                 stateType={this.state.pickedType}>
                 <svg viewBox='0 0 880 800'>
                   <path d='M160,800A160,160,0,0,1,0,640V160A160,160,0,0,1,160,0H400V800H160Z' />
-                  <path style={{ fill: '#bbb' }} d='M879,142.119V657.881A160.015,160.015,0,0,1,720,800H480V0H720A160.016,160.016,0,0,1,879,142.119Z' />
+                  <path d='M879,142.119V657.881A160.015,160.015,0,0,1,720,800H480V0H720A160.016,160.016,0,0,1,879,142.119Z' />
                 </svg>
               </IconButton>
               <IconButton
