@@ -73,7 +73,7 @@ export default class TextInput extends Component {
   updateText (value) {
     if ((this.props.maxLength && value.length <= this.props.maxLength) ||
       this.props.maxLength == null) {
-      this.setState({ value });
+      this.setState({ value: this.props.uppercase ? value.toUpperCase() : value });
     }
   }
   render () {
@@ -119,8 +119,8 @@ const StyledButton = styled.div`
   background-size: cover;
   background-position: center;
   background-color: #fff;
-  pointer-events: ${props => props.hidden ? 'none' : 'auto'};
-  opacity: ${props => props.hidden ? 0 : 1};
+  pointer-events: ${props => (props.hidden || props.disabled) ? 'none' : 'auto'};
+  opacity: ${props => props.hidden ? 0 : props.disabled ? 0.3 : 1};
   transition: opacity .3s ease;
 
   ${props => props.primary && css`
@@ -141,6 +141,7 @@ export const Button = props => (
   <StyledButton
     onClick={props.onClick}
     primary={props.primary}
+    disabled={props.disabled}
     hidden={props.hidden} >
     {props.children}
   </StyledButton>

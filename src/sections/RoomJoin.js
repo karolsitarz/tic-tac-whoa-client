@@ -29,6 +29,7 @@ class RoomJoin extends Component {
     return (
       <Section>
         <Input
+          uppercase
           sendValue={v => (this.input = v)}
           maxLength={6}
           placeholder='room ID' />

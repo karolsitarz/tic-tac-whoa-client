@@ -306,6 +306,7 @@ export default class Game extends Component {
       pickedType: null,
       placed: [],
       textNo: 0,
+      rematch: 0,
       tics: [
         <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssrf'} small square red flat />,
         <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsrh'} big square red hole />,
@@ -325,6 +326,7 @@ export default class Game extends Component {
         <Tic setPickedTic={v => this.setPickedTic(v)} key={'scbf'} small circle blue flat />
       ]
     };
+    this.initialState = { ...this.state };
     socket.receive('GAME_PLACE', e => {
       this.setState({ state: 'PLACE', textNo: 1 });
       if (!this.hasPlaced) this.hasPlaced = true;
@@ -392,6 +394,7 @@ export default class Game extends Component {
     });
 
     socket.receive('GAME_END_WIN', pos => {
+      this.Section.scrollIntoView();
       const placed = this.state.placed.map(tic => {
         if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
         else return tic;
@@ -399,6 +402,7 @@ export default class Game extends Component {
       this.setState({ end: 2, state: 'PLACE', winning: false, placed });
     });
     socket.receive('GAME_END_LOSE', pos => {
+      this.Section.scrollIntoView();
       const placed = this.state.placed.map(tic => {
         if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
         else return tic;
@@ -406,16 +410,23 @@ export default class Game extends Component {
       this.setState({ end: 1, state: 'PLACE', winning: false, placed });
     });
     socket.receive('GAME_END_DRAW', data => {
+      this.Section.scrollIntoView();
       this.setState({ end: 3, winning: false });
     });
     socket.receive('GAME_DRAW_WAIT', e => {
       this.setState({ state: 'PLACE', textNo: 4 });
       if (!this.hasPlaced) this.hasPlaced = true;
     });
+    socket.receive('GAME_REMATCH', e => {
+      this.setState(this.initialState);
+    });
+    socket.receive('GAME_REMATCH_CANCEL', e => {
+      this.setState({ rematch: -1 });
+    });
   }
   render () {
     return (
-      <Section>
+      <Section ref={ref => (this.Section = ref)}>
         <BlankFixedSection />
         <FixedSection>
           <Grid
@@ -515,10 +526,20 @@ export default class Game extends Component {
           <h2>{['', 'You lost! :(', 'You won! :D', 'You tied!'][this.state.end]}</h2>
           <span>{['', 'Too bad! Better luck next time!', 'Great job! You did awesome!', 'Great minds think alike!'][this.state.end]}</span>
           <Space size={1} />
-          <Button primary onClick={e => socket.comm('USER_LEAVE_ROOM')}>leave</Button>
+          <Button
+            primary
+            disabled={this.state.rematch === 1}
+            hidden={this.state.rematch === -1}
+            onClick={e => this.rematch()}>rematch</Button>
+          <Button onClick={e => socket.comm('USER_LEAVE_ROOM')}>leave</Button>
         </EndGameModal>
       </Section>
     );
+  }
+  rematch () {
+    if (this.state.rematch !== 0) return;
+    this.setState({ rematch: 1 });
+    socket.comm('REMATCH');
   }
   endRound () {
     if (this.state.end !== 0) return;
