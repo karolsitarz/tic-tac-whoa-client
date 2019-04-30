@@ -399,19 +399,29 @@ export default class Game extends Component {
     });
 
     socket.receive('GAME_END_WIN', pos => {
+      if (!Array.isArray(pos)) return;
+
+      let placed;
+      if (pos.length === 4) {
+        placed = this.state.placed.map(tic => {
+          if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
+          else return tic;
+        });
+      } else placed = this.state.placed;
       this.Section.scrollIntoView();
-      const placed = this.state.placed.map(tic => {
-        if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
-        else return tic;
-      });
       this.setState({ end: 2, state: 'PLACE', winning: false, placed });
     });
     socket.receive('GAME_END_LOSE', pos => {
+      if (!Array.isArray(pos)) return;
+
+      let placed;
+      if (pos.length === 4) {
+        placed = this.state.placed.map(tic => {
+          if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
+          else return tic;
+        });
+      } else placed = this.state.placed;
       this.Section.scrollIntoView();
-      const placed = this.state.placed.map(tic => {
-        if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
-        else return tic;
-      });
       this.setState({ end: 1, state: 'PLACE', winning: false, placed });
     });
     socket.receive('GAME_END_DRAW', data => {
