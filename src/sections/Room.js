@@ -32,6 +32,7 @@ const StyledInput = styled.input`
   }
   box-shadow: 0 0 0 2px #c262be00;
   transition: box-shadow .3s ease;
+  cursor: pointer;
 `;
 
 class RoomWait extends Component {

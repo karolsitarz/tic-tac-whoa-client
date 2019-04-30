@@ -86,6 +86,7 @@ const StyledGridSpot = styled.div`
   flex-shrink: 0;
   grid-area: ${props => props.col} / ${props => props.row} / span 1 / span 1;
   transition: opacity .3s ease;
+  cursor: pointer;
 
   &::before {
     content: "";
@@ -144,6 +145,7 @@ const StyledSpan = styled.span`
 const BottomCard = styled.section`
   background: ${props => props.theme.input};
   width: 100%;
+  max-width: 20em;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -156,6 +158,10 @@ const BottomCard = styled.section`
 
   & ${StyledTic}::after {
     background-color: ${props => props.theme.input};
+  }
+
+  & ${StyledTic} {
+    cursor: pointer;
   }
 `;
 
@@ -203,6 +209,7 @@ const ModalContainer = styled.div`
 
 const WinningModal = styled.section`
   display: flex;
+  max-width: 20em;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -211,7 +218,8 @@ const WinningModal = styled.section`
   padding: 2em 1em;
   border-radius: 2em;
   position: absolute;
-  left: 0;
+  left: calc(50% - 1em);
+  width: calc(100% - 2em);
   right: 0;
   bottom: 0;
   transition:
@@ -219,12 +227,13 @@ const WinningModal = styled.section`
     transform .3s ease;
   opacity: ${props => props.active ? '1' : '0'};
   transform: ${props => props.active
-    ? 'translate3d(0,0,0)'
-    : 'translate3d(0,calc(100% + 1em),0)'};
+    ? 'translate3d(-50%,0,0)'
+    : 'translate3d(-50%,calc(100% + 1em),0)'};
 `;
 
 const EndGameModal = styled.section`
   display: flex;
+  max-width: 20em;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -287,7 +296,8 @@ const IconButton = styled.div`
     }
   }
   width: 20%;
-  max-height: 100px;  
+  max-height: 100px;
+  cursor: pointer;
 `;
 
 const IconButtonContainer = styled.div`
