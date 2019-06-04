@@ -27,6 +27,11 @@ const Container = styled.div`
   overflow-x: hidden;
   overflow-y: auto;
   pointer-events: auto;
+  &::-webkit-scrollbar {
+    width: 0 !important;
+  }
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
 `;
 
 socket.onopen = () => {
