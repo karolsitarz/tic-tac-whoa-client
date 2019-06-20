@@ -7,14 +7,14 @@ import Section from '../components/Section';
 import { Button } from '../components/Input';
 import Space from '../components/Space';
 
-const ticFadeIn = keyframes`
+const blockFadeIn = keyframes`
   from {
     opacity: 0;
     transform: scale(0.5);
   }
 `;
 
-const StyledTic = styled.div`
+const StyledBlock = styled.div`
   width: 15vmin;
   height: 15vmin;
   max-width: 3em;
@@ -24,7 +24,7 @@ const StyledTic = styled.div`
   pointer-events: ${props => props.disabled ? 'none' : ''};
   transition: opacity .3s ease;
   opacity: ${props => props.current === true ? '1' : ''};
-  animation: ${ticFadeIn} .2s ease backwards;
+  animation: ${blockFadeIn} .2s ease backwards;
   opacity: ${props => props.winning ? '1 !important' : ''};
 
   &::before {
@@ -112,16 +112,16 @@ const Grid = styled.div`
   pointer-events: ${props => props.currentState === props.wantedState ? 'auto' : ''};
   opacity: ${props => props.currentState === props.wantedState ? '1' : '0.5'};
   transition: opacity .3s ease;
-  & > ${StyledTic} {
-    opacity: ${props => props.hideTicsEnd ? 0.2 : ''};
+  & > ${StyledBlock} {
+    opacity: ${props => props.hideBlocksEnd ? 0.2 : ''};
   }
 `;
 
-const Tic = props =>
-  <StyledTic {...props}
+const Block = props =>
+  <StyledBlock {...props}
     onClick={e => {
-      if (!props.setPickedTic) return;
-      props.setPickedTic({
+      if (!props.setPickedBlock) return;
+      props.setPickedBlock({
         size: props.big ? 'big' : 'small',
         shape: props.circle ? 'circle' : 'square',
         hole: props.hole ? 'hole' : 'flat',
@@ -156,11 +156,11 @@ const BottomCard = styled.section`
   opacity: ${props => props.hidden ? 0 : 1};
   pointer-events: ${props => props.hidden ? 'none' : 'auto'};
 
-  & ${StyledTic}::after {
+  & ${StyledBlock}::after {
     background-color: ${props => props.theme.input};
   }
 
-  & ${StyledTic} {
+  & ${StyledBlock} {
     cursor: pointer;
   }
 `;
@@ -314,7 +314,7 @@ export default class Game extends Component {
     this.state = {
       // WAIT - PLACE - PICK
       state: 'WAIT',
-      pickedTic: null,
+      pickedBlock: null,
       pickedPos: null,
       winning: false,
       end: 0,
@@ -322,23 +322,23 @@ export default class Game extends Component {
       placed: [],
       textNo: 0,
       rematch: 0,
-      tics: [
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssrf'} small square red flat />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsrh'} big square red hole />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bcrh'} big circle red hole />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'scrf'} small circle red flat />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssrh'} small square red hole />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsrf'} big square red flat />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bcrf'} big circle red flat />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'scrh'} small circle red hole />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssbh'} small square blue hole />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsbf'} big square blue flat />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bcbf'} big circle blue flat />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'scbh'} small circle blue hole />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'ssbf'} small square blue flat />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bsbh'} big square blue hole />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'bcbh'} big circle blue hole />,
-        <Tic setPickedTic={v => this.setPickedTic(v)} key={'scbf'} small circle blue flat />
+      blocks: [
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'ssrf'} small square red flat />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'bsrh'} big square red hole />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'bcrh'} big circle red hole />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'scrf'} small circle red flat />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'ssrh'} small square red hole />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'bsrf'} big square red flat />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'bcrf'} big circle red flat />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'scrh'} small circle red hole />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'ssbh'} small square blue hole />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'bsbf'} big square blue flat />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'bcbf'} big circle blue flat />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'scbh'} small circle blue hole />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'ssbf'} small square blue flat />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'bsbh'} big square blue hole />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'bcbh'} big circle blue hole />,
+        <Block setPickedBlock={v => this.setPickedBlock(v)} key={'scbf'} small circle blue flat />
       ]
     };
     this.initialState = { ...this.state };
@@ -352,60 +352,60 @@ export default class Game extends Component {
     });
     socket.receive('GAME_WAIT', e => this.setState({ state: 'WAIT', textNo: 3 }));
 
-    socket.receive('GAME_PLACED', ({ pos, tic }) => {
-      this.setState({ pickedTic: null });
+    socket.receive('GAME_PLACED', ({ pos, block }) => {
+      this.setState({ pickedBlock: null });
       if (this.state.textNo === 3) this.setState({ textNo: 0 });
       const placed = [...this.state.placed];
       placed[placed.length - 1] =
         (
-          <Tic
+          <Block
             style={{
               gridArea: `${Math.floor(pos / 4 + 1)} / ${pos % 4 + 1} / span 1 / span 1`
             }}
             key={pos}
             pos={pos}
-            big={tic.size === 'big'}
-            small={tic.size === 'small'}
-            circle={tic.shape === 'circle'}
-            square={tic.shape === 'square'}
-            hole={tic.hole === 'hole'}
-            flat={tic.hole === 'flat'}
-            red={tic.color === 'red'}
-            blue={tic.color === 'blue'} />
+            big={block.size === 'big'}
+            small={block.size === 'small'}
+            circle={block.shape === 'circle'}
+            square={block.shape === 'square'}
+            hole={block.hole === 'hole'}
+            flat={block.hole === 'flat'}
+            red={block.color === 'red'}
+            blue={block.color === 'blue'} />
         );
       this.setState({ placed });
 
-      const newTics = [...this.state.tics];
-      const i = newTics.findIndex(tic => {
-        if (tic.props.current !== true) return false;
+      const newBlocks = [...this.state.blocks];
+      const i = newBlocks.findIndex(block => {
+        if (block.props.current !== true) return false;
         return true;
       });
       if (i === -1) return;
 
-      newTics[i] = React.cloneElement(newTics[i], { ...newTics[i].props, current: undefined });
-      this.setState({ tics: newTics });
+      newBlocks[i] = React.cloneElement(newBlocks[i], { ...newBlocks[i].props, current: undefined });
+      this.setState({ blocks: newBlocks });
     });
 
     socket.receive('GAME_PICKED', data => {
       this.setState({
-        pickedTic: data.tic,
+        pickedBlock: data.block,
         pickedPos: null,
         placed: [...this.state.placed, null]
       });
-      const placedTic = data.tic;
-      const newTics = [...this.state.tics];
-      const i = newTics.findIndex(tic => {
-        if (tic.props.disabled) return false;
-        if (!(placedTic.size in tic.props)) return false;
-        if (!(placedTic.shape in tic.props)) return false;
-        if (!(placedTic.hole in tic.props)) return false;
-        if (!(placedTic.color in tic.props)) return false;
+      const placedBlock = data.block;
+      const newBlocks = [...this.state.blocks];
+      const i = newBlocks.findIndex(block => {
+        if (block.props.disabled) return false;
+        if (!(placedBlock.size in block.props)) return false;
+        if (!(placedBlock.shape in block.props)) return false;
+        if (!(placedBlock.hole in block.props)) return false;
+        if (!(placedBlock.color in block.props)) return false;
         return true;
       });
       if (i === -1) return;
 
-      newTics[i] = React.cloneElement(newTics[i], { ...newTics[i].props, disabled: true, current: true });
-      this.setState({ tics: newTics });
+      newBlocks[i] = React.cloneElement(newBlocks[i], { ...newBlocks[i].props, disabled: true, current: true });
+      this.setState({ blocks: newBlocks });
     });
 
     socket.receive('GAME_END_WIN', pos => {
@@ -413,9 +413,9 @@ export default class Game extends Component {
 
       let placed;
       if (pos.length === 4) {
-        placed = this.state.placed.map(tic => {
-          if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
-          else return tic;
+        placed = this.state.placed.map(block => {
+          if (pos.indexOf(block.props.pos) !== -1) return React.cloneElement(block, { ...block.props, winning: true });
+          else return block;
         });
       } else placed = this.state.placed;
       this.Section.scrollIntoView();
@@ -426,9 +426,9 @@ export default class Game extends Component {
 
       let placed;
       if (pos.length === 4) {
-        placed = this.state.placed.map(tic => {
-          if (pos.indexOf(tic.props.pos) !== -1) return React.cloneElement(tic, { ...tic.props, winning: true });
-          else return tic;
+        placed = this.state.placed.map(block => {
+          if (pos.indexOf(block.props.pos) !== -1) return React.cloneElement(block, { ...block.props, winning: true });
+          else return block;
         });
       } else placed = this.state.placed;
       this.Section.scrollIntoView();
@@ -455,7 +455,7 @@ export default class Game extends Component {
         <BlankFixedSection />
         <FixedSection>
           <Grid
-            hideTicsEnd={this.state.end !== 0}
+            hideBlocksEnd={this.state.end !== 0}
             currentState={this.state.state}
             wantedState='PLACE' >
             <GridSpot setPickedPos={v => this.setPickedPos(v)} pos={0} />
@@ -478,7 +478,7 @@ export default class Game extends Component {
           </Grid>
           <Space size={2} />
           <StyledSpan hidden={this.state.end !== 0}>
-            {['the opponent is choosing a tic for you', 'place your tic', 'pick the tic for your opponent', 'the opponent is placing his tic', 'find the winning combination!'][this.state.textNo]}
+            {['the opponent is choosing a block for you', 'place your block', 'pick the block for your opponent', 'the opponent is placing his block', 'find the winning combination!'][this.state.textNo]}
           </StyledSpan>
           <Space size={1} />
           <Button
@@ -495,12 +495,12 @@ export default class Game extends Component {
           <Grid
             currentState={this.state.state}
             wantedState='PICK'>
-            {this.state.tics}
+            {this.state.blocks}
           </Grid>
         </BottomCard>
         <ModalContainer active={this.state.winning}>
           <WinningModal active={this.state.winning}>
-            <StyledSpan>pick the type of winning tics</StyledSpan>
+            <StyledSpan>pick the type of winning blocks</StyledSpan>
             <Space size={1} />
             <IconButtonContainer>
               <IconButton
@@ -570,38 +570,38 @@ export default class Game extends Component {
     if (this.state.end !== 0) return;
     if (this.state.winning) return;
 
-    if (this.state.state === 'PICK' && this.state.pickedTic != null) {
-      socket.comm('GAME_PICKED', this.state.pickedTic);
+    if (this.state.state === 'PICK' && this.state.pickedBlock != null) {
+      socket.comm('GAME_PICKED', this.state.pickedBlock);
     } else if (this.state.state === 'PLACE' && this.state.pickedPos != null && this.state.textNo !== 4) {
       socket.comm('GAME_PLACED', this.state.pickedPos);
     }
   }
-  setPickedTic (data) {
+  setPickedBlock (data) {
     if (this.state.end !== 0) return;
     if (this.state.state !== 'PICK') return;
     if (this.state.winning !== false) return;
-    this.setState({ pickedTic: data });
+    this.setState({ pickedBlock: data });
 
-    const placedTic = data;
-    const newTics = [...this.state.tics];
-    const current = newTics.findIndex(tic => {
-      if (tic.props.current) return true;
+    const placedBlock = data;
+    const newBlocks = [...this.state.blocks];
+    const current = newBlocks.findIndex(block => {
+      if (block.props.current) return true;
       return false;
     });
 
-    const i = newTics.findIndex(tic => {
-      if (tic.props.disabled) return false;
-      if (!(placedTic.size in tic.props)) return false;
-      if (!(placedTic.shape in tic.props)) return false;
-      if (!(placedTic.hole in tic.props)) return false;
-      if (!(placedTic.color in tic.props)) return false;
+    const i = newBlocks.findIndex(block => {
+      if (block.props.disabled) return false;
+      if (!(placedBlock.size in block.props)) return false;
+      if (!(placedBlock.shape in block.props)) return false;
+      if (!(placedBlock.hole in block.props)) return false;
+      if (!(placedBlock.color in block.props)) return false;
       return true;
     });
     if (i === -1) return;
 
-    if (current !== -1) newTics[current] = React.cloneElement(newTics[current], { ...newTics[current].props, disabled: false, current: false });
-    newTics[i] = React.cloneElement(newTics[i], { ...newTics[i].props, disabled: true, current: true });
-    this.setState({ tics: newTics });
+    if (current !== -1) newBlocks[current] = React.cloneElement(newBlocks[current], { ...newBlocks[current].props, disabled: false, current: false });
+    newBlocks[i] = React.cloneElement(newBlocks[i], { ...newBlocks[i].props, disabled: true, current: true });
+    this.setState({ blocks: newBlocks });
   }
 
   setPickedPos (pos) {
@@ -610,23 +610,23 @@ export default class Game extends Component {
     if (this.state.winning !== false) return;
     this.setState({ pickedPos: pos });
 
-    const tic = this.state.pickedTic;
+    const block = this.state.pickedBlock;
     const placed = [...this.state.placed];
     placed[placed.length - 1] =
       (
-        <Tic
+        <Block
           style={{
             gridArea: `${Math.floor(pos / 4 + 1)} / ${pos % 4 + 1} / span 1 / span 1`
           }}
           key={pos}
-          big={tic.size === 'big'}
-          small={tic.size === 'small'}
-          circle={tic.shape === 'circle'}
-          square={tic.shape === 'square'}
-          hole={tic.hole === 'hole'}
-          flat={tic.hole === 'flat'}
-          red={tic.color === 'red'}
-          blue={tic.color === 'blue'} />
+          big={block.size === 'big'}
+          small={block.size === 'small'}
+          circle={block.shape === 'circle'}
+          square={block.shape === 'square'}
+          hole={block.hole === 'hole'}
+          flat={block.hole === 'flat'}
+          red={block.color === 'red'}
+          blue={block.color === 'blue'} />
       );
     this.setState({ placed: placed });
   }
@@ -640,7 +640,7 @@ export default class Game extends Component {
     if (this.state.state === 'PLACE' && this.state.pickedPos != null) {
       socket.comm('GAME_WIN_PLACED', {
         type,
-        tic: this.state.pickedTic,
+        block: this.state.pickedBlock,
         pos: this.state.pickedPos
       });
     } else {
