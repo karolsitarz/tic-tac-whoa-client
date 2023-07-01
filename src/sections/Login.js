@@ -41,7 +41,7 @@ class Login extends Component {
   render () {
     return (
       <Section>
-        <Title>tic-tac-wtf</Title>
+        <Title>tic-tac-whoa</Title>
         <Space size={5} />
         <Input
           initial={window.localStorage.nickname || ''}

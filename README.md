@@ -1,4 +1,4 @@
-# tic-tac-wtf ❌⭕❓
+# tic-tac-whoa ❌⭕❓
 A real-time **two-player game**. Tic-tac-toe, but approximately 8 times as challenging.
 
 ## How to play?
